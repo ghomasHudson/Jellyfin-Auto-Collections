@@ -27,7 +27,7 @@ Can't find Ménilmontant
 ```
 
 ## How to use
-First, copy `config.ini.EXAMPLE` to `config.ini` and change the values for your specific jellyfin instance.
+First, copy `config.ini.EXAMPLE` to `config.ini` and change the values for your specific jellyfin instance. You can also customize the ids of the imdb and letterbox lists that will be used.
 
 Install the requirements with `pip install -r requirements.txt`.
 
