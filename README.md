@@ -1,6 +1,8 @@
 # Jellyfin-Collections
 Automatically make jellyfin collections based on internet lists.
 
+![pic-selected-220609-1308-00](https://user-images.githubusercontent.com/13795113/172841313-ab1789d5-7451-44e9-a074-19c77b282977.png)
+
 ## How to use
 First, copy `config.ini.EXAMPLE` to `config.ini` and change the values for your specific jellyfin instance.
 
