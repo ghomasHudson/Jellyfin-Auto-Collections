@@ -4,7 +4,7 @@ import html
 import json
 import configparser
 
-from utils import get_library_id, request_repeat_get, request_repeat_post
+from utils import request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
 
 # Load Config
 config = configparser.ConfigParser()
@@ -20,35 +20,18 @@ params = {
     "Recursive": "true"
 }
 
-print("Getting collections list...")
-collections_id = get_library_id("Collections", headers=headers)
-params2 = params.copy()
-params2["includeItemTypes"] = "BoxSet"
-res = requests.get(f'{server_url}/Users/{user_id}/Items',headers=headers, params=params2)
-collections = {r["Name"]:r["Id"] for r in res.json()["Items"]}
+collections = get_all_collections(headers=headers)
 
 for list_id in letterboxd_list_ids:
     # Parse letterboxd page
+    print()
+    print()
     res = requests.get(f'https://letterboxd.com/{list_id}/detail/by/release-earliest')
     list_name = html.unescape(res.text.split('<h1 class="title-1 prettify" itemprop="title">')[1].split("</h1>")[0]).strip()
-
+    collection_id = find_collection_with_name_or_create(list_name, collections, headers=headers)
+    print("************************************************")
     print()
-    print()
-    print("*******************************")
 
-    collection_id = None
-    for collection in collections:
-        if list_name == collection:
-            print("found", list_name, collections[collection])
-            collection_id = collections[collection]
-            break
-
-    if collection_id is None:
-        print(f"Creating {list_name}...")
-        res2 = request_repeat_post(f'{server_url}/Collections',headers=headers, params={"name": list_name})
-        collection_id = res2.json()["Id"]
-
-    print()
     for movie in res.text.split('film-detail-content">')[1:]:
         movie_title = movie.split('<a href="')[1].split('>')[1].split("<")[0]
         movie_year = movie.split('metadata">')[1].split('<a href="')[1].split('>')[1].split("<")[0]

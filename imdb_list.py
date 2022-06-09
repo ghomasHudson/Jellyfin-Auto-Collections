@@ -4,7 +4,7 @@ import html
 import json
 import configparser
 
-from utils import get_library_id, request_repeat_get, request_repeat_post
+from utils import request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
 
 # Load Config
 config = configparser.ConfigParser()
@@ -20,38 +20,20 @@ params = {
     "Recursive": "true"
 }
 
-collections_id = get_library_id("Collections", headers=headers)
-
-print("Getting collections list...")
-params2 = params.copy()
-params2["includeItemTypes"] = "BoxSet"
-res = requests.get(f'{server_url}/Users/{user_id}/Items',headers=headers, params=params2)
-collections = {r["Name"]:r["Id"] for r in res.json()["Items"]}
+# Find list of all collections
+collections = get_all_collections(headers=headers)
 
 for imdb_list_id in imdb_list_ids:
     # Parse each IMDB list page
+    print()
+    print()
     res = requests.get(f'https://www.imdb.com/list/{imdb_list_id}')
     list_name = html.unescape(res.text.split('<h1 class="header list-name">')[1].split("</h1>")[0])
+    collection_id = find_collection_with_name_or_create(list_name, collections, headers=headers)
+    print("************************************************")
     print()
-    print()
-    print("*******************************")
-
-    collection_id = None
-    for collection in collections:
-        # Try and find the collection
-        if list_name == collection:
-            print("found", list_name, collections[collection])
-            collection_id = collections[collection]
-            break
-
-    if collection_id is None:
-        # Collection doesn't exist -> Make a new one
-        print(f"Creating {list_name}...")
-        res2 = request_repeat_post(f'{server_url}/Collections',headers=headers, params={"name": list_name})
-        collection_id = res2.json()["Id"]
 
     # Add to collection
-    print()
     for movie in res.text.split("lister-item-header")[1:]:
         movie_title = movie.split('<a href="')[1].split('>')[1].split("<")[0]
         movie_year = movie.split("lister-item-year")[1].split("(")[1].split(")")[0]
