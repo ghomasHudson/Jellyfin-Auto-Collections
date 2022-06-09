@@ -11,7 +11,6 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 server_url = config["main"]["server_url"]
 user_id = config["main"]["user_id"]
-imdb_list_ids = json.loads(config["main"]["imdb_list_ids"])
 headers = {'X-Emby-Token': config["main"]["jellyfin_api_key"]}
 collection_name = "TSPDT Top 1000 Greatest"
 
