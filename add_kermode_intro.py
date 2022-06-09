@@ -77,7 +77,6 @@ for fn in glob.glob("/tmp/bfi/*.json"):
     # Download Kermode intro if it doesn't already exist
     print(movie_title, movie_year)
     if movie is not None:
-        print("\tDownloading", movie["Name"], movie["Id"])
         movie_filepath = movies_dir + "/" + movie["Name"].replace("'","\'") + " (" + str(movie["ProductionYear"]) + ")/extras"
         if not os.path.exists(movie_filepath):
             os.mkdir(movie_filepath)
