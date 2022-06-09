@@ -77,7 +77,9 @@ for fn in glob.glob("/tmp/bfi/*.json"):
     # Download Kermode intro if it doesn't already exist
     print(movie_title, movie_year)
     if movie is not None:
-        movie_filepath = movies_dir + "/" + movie["Name"].replace("'","\'") + " (" + str(movie["ProductionYear"]) + ")/extras"
+        movie = requests.get(f'{server_url}/Users/{user_id}/Item/{movie["Id"]}',headers=headers).json()
+        movie_filepath = f'{movies_dir}/{movie["Path"][-2]}/extras"
+        #movie_filepath = movies_dir + "/" + movie["Name"].replace("'","\'") + " (" + str(movie["ProductionYear"]) + ")/extras"
         if not os.path.exists(movie_filepath):
             os.mkdir(movie_filepath)
         if len(glob.glob(movie_filepath+"/Mark Kermode*")) == 0:
