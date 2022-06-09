@@ -1,5 +1,5 @@
 # Jellyfin Auto Collections
-Automatically make jellyfin collections based on internet lists.
+A collection of scripts to automatically make and update jellyfin collections based on internet lists such as IMDb and letterboxd.
 ```
 Getting collections list...
 
