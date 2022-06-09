@@ -32,8 +32,8 @@ First, copy `config.ini.EXAMPLE` to `config.ini` and change the values for your 
 Then run the python files for each type of collection:
 
 - `imdb_list.py` makes collections based on [IMDb](www.imdb.com) lists.
-- `letterboxd_list.py` makes collections based on [Letterboxd lists]([www.imdb.com](https://letterboxd.com/lists/)).
-- `tspdt_list.py` makes collections based on the [They shoot pictures greatest films starting list](https://www.theyshootpictures.com/gf1000_startinglist_table.php)
+- `letterboxd_list.py` makes collections based on [Letterboxd lists](https://letterboxd.com/lists/).
+- `tspdt_list.py` makes collections based on the [They shoot pictures greatest films starting list](https://www.theyshootpictures.com/gf1000_startinglist_table.php).
 
 Running these scripts will make a collection on your jellyfin server with any matched movies. You can then customise the description/images to your liking. Running the scripts again will add new movies to this existing collection.
 
