@@ -1,7 +1,30 @@
 # Jellyfin-Collections
 Automatically make jellyfin collections based on internet lists.
+```
+Getting collections list...
 
-![pic-selected-220609-1308-00](https://user-images.githubusercontent.com/13795113/172841313-ab1789d5-7451-44e9-a074-19c77b282977.png)
+found /r/TrueFilm Canon (1000 films) 015dee24c79dacfa80300afb7577fc37
+************************************************
+
+Can't find A Trip to the Moon
+Can't find The Birth of a Nation
+Can't find Intolerance: Love&#039;s Struggle Throughout the Ages
+Can't find A Man There Was
+Can't find The Cabinet of Dr. Caligari
+Added Big Buck Bunny cc561c8b1d5da3a080cdb61ebe44d1a7
+Added Big Buck Bunny 2 0515533b716e8fe76d3b630f9b9b6d51
+Can't find Nosferatu
+Can't find Dr. Mabuse, the Gambler
+Can't find Häxan
+Added Big Buck Bunny 3 9a6b8002ef8f12a0611e92f5104d8b8e
+Can't find Sherlock, Jr.
+Can't find Greed
+Can't find The Last Laugh
+Can't find Battleship Potemkin
+Added Big Buck Bunny 5 98690cc73413b12593988687ee737a27
+Can't find Ménilmontant
+...
+```
 
 ## How to use
 First, copy `config.ini.EXAMPLE` to `config.ini` and change the values for your specific jellyfin instance.
