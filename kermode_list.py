@@ -2,7 +2,7 @@
 import requests
 import configparser
 
-from utils import find_collection_with_name_or_create
+from utils import find_collection_with_name_or_create, get_all_collections
 
 # Load Config
 config = configparser.ConfigParser()
