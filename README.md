@@ -26,6 +26,8 @@ Can't find Ménilmontant
 ...
 ```
 
+![pic-selected-220609-1405-13](https://user-images.githubusercontent.com/13795113/172853971-8b5ab33b-58a9-4073-8a28-c471e9710cdc.png)
+
 ## How to use
 First, copy `config.ini.EXAMPLE` to `config.ini` and change the values for your specific jellyfin instance. You can also customize the ids of the imdb and letterbox lists that will be used.
 
