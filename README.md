@@ -43,4 +43,4 @@ Running these scripts will make a collection on your jellyfin server with any ma
 
 There are also experimental scripts to add the [BFI 'Mark Kermode Introduces'](https://www.youtube.com/watch?v=2duv-rLkt0U&list=PLXvkgGofjDzhx-h7eexfVbH3WslWrBXE9) videos to your library and collections:
 - `add_kermode_intro.py` downloads matching Mark Kermode intros to your movies as `extras`. This requires the script to have access to your movies library files and have `youtube-dl` installed.
-- `kermode_list.py` after running the previous script, this adds any movies with a Kermode intro into a collection.
+- `kermode_list.py` after running the previous script (rescan your library first), this adds any movies with a Kermode intro into a collection.
