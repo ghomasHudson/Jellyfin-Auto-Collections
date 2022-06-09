@@ -29,6 +29,8 @@ Can't find Ménilmontant
 ## How to use
 First, copy `config.ini.EXAMPLE` to `config.ini` and change the values for your specific jellyfin instance.
 
+Install the requirements with `pip install -r requirements.txt`.
+
 Then run the python files for each type of collection:
 
 - `imdb_list.py` makes collections based on [IMDb](www.imdb.com) lists.
