@@ -1,4 +1,4 @@
-# Jellyfin-Collections
+# Jellyfin Auto Collections
 Automatically make jellyfin collections based on internet lists.
 ```
 Getting collections list...
