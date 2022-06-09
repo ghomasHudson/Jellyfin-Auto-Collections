@@ -1,0 +1,13 @@
+[main]
+# URL to your jellyfin server
+server_url = https://jellyfin.example.com
+# Create an API key by going to: Admin>Dashboard>Advanced>API Keys
+jellyfin_api_key = 1a1111aa1a1a1aaaa11a11aa111aaa11
+# ID of your jellyfin user. Found in the URL when you navigate to your user in the Dashboard.
+user_id = 1a1111aa1a1a1aaaa11a11aa111aaa11
+# Path to your movie library directory
+movies_dir = /movies
+# IMDB list ids to create collections from
+imdb_list_ids = ["ls076260497", "ls020312143", "ls055592025", "ls008765885", "ls052535080", "ls000156310", "ls027841309"]
+# Letterboxd list ids to create collections from
+letterboxd_list_ids = ["momsaysitsok/list/r-truefilm-canon-1000-films"]
