@@ -27,7 +27,7 @@ for list_id in letterboxd_list_ids:
     print()
     print()
     res = requests.get(f'https://letterboxd.com/{list_id}/detail/by/release-earliest')
-    list_name = html.unescape(res.text.split('<h1 class="title-1 prettify" itemprop="title">')[1].split("</h1>")[0]).strip()
+    list_name = html.unescape(res.text.split('<h1 class="title-1 prettify">')[1].split("</h1>")[0]).strip()
     collection_id = find_collection_with_name_or_create(list_name, collections, headers=headers)
     print("************************************************")
     print()
