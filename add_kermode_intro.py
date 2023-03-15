@@ -51,6 +51,7 @@ for fn in glob.glob("/tmp/bfi/*.json"):
     movie_title = movie_title.split("|")[0]
     movie_title = movie_title.replace("BFI Player", "")
     movie_title = re.split(r'Reviews|reviews|reviews:|introduces', movie_title)[-1].strip()
+    movie_title = movie_title.replace("[subtitled]", "").strip()
     year_search = re.search(r'\((.*?)\)',movie_title)
     movie_year = None
     if year_search is not None:
