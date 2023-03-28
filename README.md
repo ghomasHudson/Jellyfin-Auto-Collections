@@ -36,11 +36,12 @@ Install the requirements with `pip install -r requirements.txt`.
 Then run the python files for each type of collection:
 
 - `imdb_list.py` makes collections based on [IMDb](www.imdb.com) lists.
+- `imdb_chart.py` makes collections based on [IMDb](www.imdb.com) charts (such as Top 250 Movies, Most Popular Movies, etc).
 - `letterboxd_list.py` makes collections based on [Letterboxd lists](https://letterboxd.com/lists/).
 - `tspdt_list.py` makes collections based on the [They shoot pictures greatest films starting list](https://www.theyshootpictures.com/gf1000_startinglist_table.php).
 
 Running these scripts will make a collection on your jellyfin server with any matched movies. You can then customise the description/images to your liking. Running the scripts again will add new movies to this existing collection.
 
-There are also experimental scripts to add the [BFI 'Mark Kermode Introduces'](https://www.youtube.com/watch?v=2duv-rLkt0U&list=PLXvkgGofjDzhx-h7eexfVbH3WslWrBXE9) videos to your library and collections:
+There are also scripts to add the [BFI 'Mark Kermode Introduces'](https://www.youtube.com/watch?v=2duv-rLkt0U&list=PLXvkgGofjDzhx-h7eexfVbH3WslWrBXE9) videos to your library and collections:
 - `add_kermode_intro.py` downloads matching Mark Kermode intros to your movies as `extras`. This requires the script to have access to your movies library files and have `youtube-dl` installed.
 - `kermode_list.py` after running the previous script (rescan your library first), this adds any movies with a Kermode intro into a collection.
