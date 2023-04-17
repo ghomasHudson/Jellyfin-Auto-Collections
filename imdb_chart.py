@@ -5,6 +5,7 @@ import json
 import simplejson
 import configparser
 import re
+import datetime
 
 
 from utils import request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
@@ -38,10 +39,15 @@ for imdb_chart_id in imdb_chart_ids:
     print()
 
     # Add to collection
-    text = res.text.split('<tbody class="lister-list">', 1)[1]
+    text = res.text.split('ab_widget',1)[1].split('<tbody', 1)[1]
     for movie in text.split("<tr>")[2:]:
         movie_title = movie.split("titleColumn\">")[1].split(">")[1].split("<")[0]
-        movie_year = movie.split("secondaryInfo\">(")[1].split(")")[0]
+        if "secondaryInfo\">(" in movie:
+            movie_year = movie.split("secondaryInfo\">(")[1].split(")")[0]
+        else:
+            # Handle boxoffice where year is not given
+            movie_year = datetime.date.today().year
+
         params2 = params.copy()
         params2["searchTerm"] = movie_title
         params2["years"] = movie_year
