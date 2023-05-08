@@ -13,3 +13,5 @@ imdb_list_ids = ["ls076260497", "ls020312143", "ls055592025", "ls008765885", "ls
 imdb_chart_ids = ["top"]
 # Letterboxd list ids to create collections from
 letterboxd_list_ids = ["momsaysitsok/list/r-truefilm-canon-1000-films"]
+# Flag which disables the checking of years for tv shows - can help if some get missed
+disable_tv_year_filter = False

@@ -3,6 +3,7 @@ import requests
 import html
 import json
 import configparser
+import csv
 
 from utils import request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
 
@@ -20,6 +21,15 @@ params = {
     "Recursive": "true"
 }
 
+imdb_to_jellyfin_type_map = {
+    "movie": ["Movie"],
+    "short": ["Movie"],
+    "tvEpisode": ["TvProgram", "Episode"],
+    "tvSeries": ["Program", "Series"],
+    "tvMiniSeries": ["Program", "Series"],
+    "tvMovie": [],
+}
+
 # Find list of all collections
 collections = get_all_collections(headers=headers)
 
@@ -33,21 +43,27 @@ for imdb_list_id in imdb_list_ids:
     print("************************************************")
     print()
 
-    # Add to collection
-    for movie in res.text.split("lister-item-header")[1:]:
-        movie_title = movie.split('<a href="')[1].split('>')[1].split("<")[0]
-        movie_year = movie.split("lister-item-year")[1].split("(")[1].split(")")[0]
+    res = requests.get(f'https://www.imdb.com/list/{imdb_list_id}/export')
+    reader = csv.DictReader(res.text.split("\n"))
+    for item in reader:
         params2 = params.copy()
-        params2["searchTerm"] = movie_title
-        params2["years"] = movie_year
-        params2["includeItemTypes"] = "Movie"
+        params2["searchTerm"] = item["Title"]
+        params2["years"] = item["Year"]
+
+        if item["Title Type"] == "tvEpisode" and ": " in item["Title"]:
+            params2["searchTerm"] = item["Title"].split(": ", 1)[1]
+
+        if config.getboolean("main", "disable_tv_year_filter", fallback=False) and item["Title Type"] in ["tvSeries", "tvMiniSeries"]:
+            del params2["years"]
+
+        params2["includeItemTypes"] = imdb_to_jellyfin_type_map[item["Title Type"]]
         res2 = request_repeat_get(f'{server_url}/Users/{user_id}/Items',headers=headers, params=params2)
         try:
             if len(res2.json()["Items"]) > 0:
-                movie_id = res2.json()["Items"][0]["Id"]
-                request_repeat_post(f'{server_url}/Collections/{collection_id}/Items?ids={movie_id}',headers=headers)
-                print("Added", movie_title, movie_id)
+                item_id = res2.json()["Items"][0]["Id"]
+                request_repeat_post(f'{server_url}/Collections/{collection_id}/Items?ids={item_id}',headers=headers)
+                print("Added", item["Title"], item_id)
             else:
-                print("Can't find", movie_title)
+                print("Can't find", item["Title"])
         except json.decoder.JSONDecodeError:
             print("JSON decode error - skipping")
