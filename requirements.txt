@@ -1,3 +1,4 @@
 requests
 configparser
 lxml
+simplejson
