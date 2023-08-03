@@ -26,8 +26,10 @@ imdb_to_jellyfin_type_map = {
     "short": ["Movie"],
     "tvEpisode": ["TvProgram", "Episode"],
     "tvSeries": ["Program", "Series"],
+    "tvShort": ["TvProgram", "Episode", "Program"],
     "tvMiniSeries": ["Program", "Series"],
-    "tvMovie": [],
+    "tvMovie": ["Movie", "TvProgram", "Episode"],
+    "video": ["Movie", "TvProgram", "Episode", "Series"],
 }
 
 # Find list of all collections
