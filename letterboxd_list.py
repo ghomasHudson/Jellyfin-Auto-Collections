@@ -3,6 +3,7 @@ import requests
 import html
 import json
 import configparser
+import html
 
 from utils import request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
 
@@ -33,7 +34,7 @@ for list_id in letterboxd_list_ids:
     print()
 
     for movie in res.text.split('film-detail-content">')[1:]:
-        movie_title = movie.split('<a href="')[1].split('>')[1].split("<")[0]
+        movie_title = html.unescape(movie.split('<a href="')[1].split('>')[1].split("<")[0])
         movie_year = movie.split('metadata">')[1].split('<a href="')[1].split('>')[1].split("<")[0]
         params2 = params.copy()
         params2["searchTerm"] = movie_title
