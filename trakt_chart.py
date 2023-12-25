@@ -5,7 +5,7 @@ import threading
 from queue import Queue
 import sqlite3
 
-# Utility functions (assuming they are defined in your utils.py)
+# Utility functions
 from utils import request_repeat_get, find_collection_with_name_or_create, get_all_collections
 
 # Load Config
@@ -22,9 +22,6 @@ params = {
     "enableImages": "false",
     "Recursive": "true"
 }
-
-# Database path
-db_path = 'processed_ids.db'
 
 def initialize_db(db_path):
     conn = sqlite3.connect(db_path)
