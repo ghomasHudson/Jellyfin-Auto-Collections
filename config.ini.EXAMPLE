@@ -5,6 +5,8 @@ server_url = https://jellyfin.example.com
 jellyfin_api_key = 1a1111aa1a1a1aaaa11a11aa111aaa11
 # ID of your jellyfin user. Found in the URL when you navigate to your user in the Dashboard.
 user_id = 1a1111aa1a1a1aaaa11a11aa111aaa11
+# DB Path to cache matches in select scripts
+db_path = '/path/to/scripts/Jellyfin-Auto-Collections/processed_ids.db'
 # Path to your movie library directory (only needed for the BFI kermode scripts, everything else can be run remotely just using the API)
 movies_dir = /movies
 # IMDB list ids to create collections from
@@ -15,3 +17,5 @@ imdb_chart_ids = ["top"]
 letterboxd_list_ids = ["momsaysitsok/list/r-truefilm-canon-1000-films"]
 # Flag which disables the checking of years for tv shows - can help if some get missed
 disable_tv_year_filter = False
+# Trakt Client ID (Can be obtained at https://trakt.tv/oauth/applications)
+trakt_client_id = 
