@@ -2,18 +2,19 @@
 import requests
 import html
 import json
-import configparser
 import html
 
-from utils import request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
+from utils import load_env_config, load_yaml_config, request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
 
-# Load Config
-config = configparser.ConfigParser()
-config.read('config.ini')
-server_url = config["main"]["server_url"]
-user_id = config["main"]["user_id"]
-letterboxd_list_ids = json.loads(config["main"]["letterboxd_list_ids"])
-headers = {'X-Emby-Token': config["main"]["jellyfin_api_key"]}
+env_config = load_env_config()
+server_url = env_config["server_url"]
+api_key= env_config["api_key"]
+user_id = env_config["user_id"]
+
+yaml_config = load_yaml_config()
+letterboxd_list_ids = yaml_config["letterboxd_list_ids"]
+
+headers = {'X-Emby-Token': api_key}
 
 params = {
     "enableTotalRecordCount": "false",
@@ -21,7 +22,7 @@ params = {
     "Recursive": "true"
 }
 
-collections = get_all_collections(headers=headers)
+collections = get_all_collections(server_url, user_id, headers=headers)
 
 for list_id in letterboxd_list_ids:
     # Parse letterboxd page
@@ -29,7 +30,7 @@ for list_id in letterboxd_list_ids:
     print()
     res = requests.get(f'https://letterboxd.com/{list_id}/detail/by/release-earliest')
     list_name = html.unescape(res.text.split('<h1 class="title-1 prettify">')[1].split("</h1>")[0]).strip()
-    collection_id = find_collection_with_name_or_create(list_name, collections, headers=headers)
+    collection_id = find_collection_with_name_or_create(server_url, list_name, collections, headers=headers)
     print("************************************************")
     print()
 

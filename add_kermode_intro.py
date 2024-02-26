@@ -8,15 +8,14 @@ import glob
 import json
 import re
 import requests
-import configparser
 
-# Load Config
-config = configparser.ConfigParser()
-config.read('config.ini')
-server_url = config["main"]["server_url"]
-user_id = config["main"]["user_id"]
-movies_dir = config["main"]["movies_dir"]
-headers = {'X-Emby-Token': config["main"]["jellyfin_api_key"]}
+env_config = load_env_config()
+server_url = env_config["server_url"]
+api_key= env_config["api_key"]
+user_id = env_config["user_id"]
+movies_dir = env_config["movies_dir"]
+
+headers = {'X-Emby-Token': api_key}
 
 def find_movie(title, year=None):
     params = {

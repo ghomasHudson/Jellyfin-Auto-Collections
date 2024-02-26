@@ -2,18 +2,20 @@
 import requests
 import html
 import json
-import configparser
 import csv
 
-from utils import request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
+from utils import load_env_config, load_yaml_config, request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
 
-# Load Config
-config = configparser.ConfigParser()
-config.read('config.ini')
-server_url = config["main"]["server_url"]
-user_id = config["main"]["user_id"]
-imdb_list_ids = json.loads(config["main"]["imdb_list_ids"])
-headers = {'X-Emby-Token': config["main"]["jellyfin_api_key"]}
+env_config = load_env_config()
+server_url = env_config["server_url"]
+api_key= env_config["api_key"]
+user_id = env_config["user_id"]
+disable_tv_year_filter = env_config["disable_tv_year_filter"]
+
+yaml_config = load_yaml_config()
+imdb_list_ids = yaml_config["imdb_list_ids"]
+
+headers = {'X-Emby-Token': api_key}
 
 params = {
     "enableTotalRecordCount": "false",
@@ -33,7 +35,7 @@ imdb_to_jellyfin_type_map = {
 }
 
 # Find list of all collections
-collections = get_all_collections(headers=headers)
+collections = get_all_collections(server_url, user_id, headers=headers)
 
 for imdb_list_id in imdb_list_ids:
     # Parse each IMDB list page
@@ -41,7 +43,7 @@ for imdb_list_id in imdb_list_ids:
     print()
     res = requests.get(f'https://www.imdb.com/list/{imdb_list_id}')
     list_name = html.unescape(res.text.split('<h1 class="header list-name">')[1].split("</h1>")[0])
-    collection_id = find_collection_with_name_or_create(list_name, collections, headers=headers)
+    collection_id = find_collection_with_name_or_create(server_url, list_name, collections, headers=headers)
     print("************************************************")
     print()
 
@@ -55,7 +57,7 @@ for imdb_list_id in imdb_list_ids:
         if item["Title Type"] == "tvEpisode" and ": " in item["Title"]:
             params2["searchTerm"] = item["Title"].split(": ", 1)[1]
 
-        if config.getboolean("main", "disable_tv_year_filter", fallback=False) and item["Title Type"] in ["tvSeries", "tvMiniSeries"]:
+        if disable_tv_year_filter and item["Title Type"] in ["tvSeries", "tvMiniSeries"]:
             del params2["years"]
 
         params2["includeItemTypes"] = imdb_to_jellyfin_type_map[item["Title Type"]]

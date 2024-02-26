@@ -3,20 +3,20 @@ import requests
 import html
 import json
 import simplejson
-import configparser
 import re
 import datetime
 
+from utils import load_env_config, load_yaml_config, request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
 
-from utils import request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
+env_config = load_env_config()
+server_url = env_config["server_url"]
+api_key= env_config["api_key"]
+user_id = env_config["user_id"]
 
-# Load Config
-config = configparser.ConfigParser()
-config.read('config.ini')
-server_url = config["main"]["server_url"]
-user_id = config["main"]["user_id"]
-imdb_chart_ids = json.loads(config["main"]["imdb_chart_ids"])
-headers = {'X-Emby-Token': config["main"]["jellyfin_api_key"]}
+yaml_config = load_yaml_config()
+imdb_chart_ids = yaml_config["imdb_chart_ids"]
+
+headers = {'X-Emby-Token': api_key}
 
 params = {
     "enableTotalRecordCount": "false",
@@ -25,7 +25,7 @@ params = {
 }
 
 # Find list of all collections
-collections = get_all_collections(headers=headers)
+collections = get_all_collections(server_url, user_id, headers=headers)
 
 for imdb_chart_id in imdb_chart_ids:
     # Parse each IMDB list page
@@ -34,7 +34,7 @@ for imdb_chart_id in imdb_chart_ids:
 
     res = requests.get(f'https://www.imdb.com/chart/{imdb_chart_id}')
     list_name = html.unescape(res.text.split('<h1 class="header">')[1].split("</h1>")[0])
-    collection_id = find_collection_with_name_or_create(list_name, collections, headers=headers)
+    collection_id = find_collection_with_name_or_create(server_url, list_name, collections, headers=headers)
     print("************************************************")
     print()
 

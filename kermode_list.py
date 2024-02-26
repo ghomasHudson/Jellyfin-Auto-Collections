@@ -1,20 +1,19 @@
 '''Adds videos with have a BFI 'Mark Kermode Reviews' video to a collection'''
 import requests
-import configparser
 
-from utils import find_collection_with_name_or_create, get_all_collections
+from utils import load_env_config, find_collection_with_name_or_create, get_all_collections
 
-# Load Config
-config = configparser.ConfigParser()
-config.read('config.ini')
-server_url = config["main"]["server_url"]
-user_id = config["main"]["user_id"]
-headers = {'X-Emby-Token': config["main"]["jellyfin_api_key"]}
+env_config = load_env_config()
+server_url = env_config["server_url"]
+api_key= env_config["api_key"]
+user_id = env_config["user_id"]
+
+headers = {'X-Emby-Token': api_key}
 
 # Find the mark kermode collection (or make one)
 collection_name = "Mark Kermode Introduces"
-collections = get_all_collections(headers=headers)
-kermode_collection_id = find_collection_with_name_or_create(collection_name, collections, headers=headers)
+collections = get_all_collections(server_url, user_id, headers=headers)
+kermode_collection_id = find_collection_with_name_or_create(server_url, collection_name, collections, headers=headers)
 
 params = {
     "hasSpecialFeature": "true",
