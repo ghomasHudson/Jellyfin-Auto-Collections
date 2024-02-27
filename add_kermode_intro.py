@@ -70,4 +70,5 @@ def update_mark_kermode_reviews_intros(app_config: dict):
                 print("\tIntro already Exists")
 
 if __name__ == "__main__":
-    update_mark_kermode_reviews_intros()
+    app_config = load_app_config()
+    update_mark_kermode_reviews_intros(app_config)

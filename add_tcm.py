@@ -79,4 +79,5 @@ def update_turner_classic_movies_extras(app_config: dict):
                 print("\tIntro already Exists")
                 
 if __name__ == "__main__":
-    update_turner_classic_movies_extras()
+    app_config = load_app_config()
+    update_turner_classic_movies_extras(app_config)

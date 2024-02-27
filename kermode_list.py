@@ -37,4 +37,5 @@ def update_mark_kermode_reviews_collection(app_config: dict):
             res = requests.post(f'{server_url}/Collections/{kermode_collection_id}/Items?ids={item["Id"]}',headers=headers)
 
 if __name__ == "__main__":
-    update_mark_kermode_reviews_collection()
+    app_config = load_app_config()
+    update_mark_kermode_reviews_collection(app_config)

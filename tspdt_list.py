@@ -46,4 +46,5 @@ def update_top_1000_movies_collection(app_config: dict):
             print("JSON decode error - skipping")
             
 if __name__ == "__main__":
-    update_top_1000_movies_collection()
+    app_config = load_app_config()
+    update_top_1000_movies_collection(app_config)

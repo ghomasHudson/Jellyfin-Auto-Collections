@@ -62,4 +62,5 @@ def update_imdb_chart_collections(app_config: dict):
                 print("JSON decode error - skipping")
 
 if __name__ == "__main__":
-    update_imdb_chart_collections()
+    app_config = load_app_config()
+    update_imdb_chart_collections(app_config)
