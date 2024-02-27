@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.source https://github.com/mzrimsek/jellyfin-auto-
 ENV DEBIAN_FRONTEND noninteractive
 ENV RUNNING_IN_DOCKER true
 
-RUN apt-get update && apt-get install -y python3.10 libxml2-dev libxslt-dev wget
+RUN apt-get update && apt-get install -y python3.10 libxml2-dev libxslt1-dev wget
 
 RUN wget -O /tmp/script.py https://bootstrap.pypa.io/get-pip.py
 RUN python3.10 /tmp/script.py
