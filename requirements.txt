@@ -1,4 +1,6 @@
 requests
 lxml
+simplejson
 python-dotenv
 pyyaml
+apscheduler

@@ -11,7 +11,7 @@ import requests
 from utils import load_app_config, find_movie
 
 def update_mark_kermode_reviews_intros(app_config: dict):
-'''Downloads BFI 'Mark Kermode Reviews' video to related films'''
+    '''Downloads BFI 'Mark Kermode Reviews' video to related films'''
     server_url = app_config["server_url"]
     api_key= app_config["api_key"]
     user_id = app_config["user_id"]

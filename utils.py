@@ -99,6 +99,12 @@ def load_env_config():
     
     config_dict["disable_tv_year_filter"] = get_env_variable("DISABLE_TV_YEAR_CHECK", default_value=False)
     
+    is_scheduling_enabled = get_env_variable("SCHEDULING_ENABLED", default_value=False)
+    config_dict["scheduling_enabled"] = is_scheduling_enabled
+    config_dict["scheduling_crontab"] = get_env_variable("SCHEDULING_CRONTAB") if is_scheduling_enabled else ""
+    config_dict["scheduling_timezone"] = get_env_variable("SCHEDULING_TIMEZONE") if is_scheduling_enabled else ""
+    config_dict["run_scheduled_task_immediately"] = get_env_variable("RUN_SCHEDULED_TASK_IMMEDIATELY", default_value=False)
+    
     config_dict["do_kermode_intros"] = get_env_variable("DO_KERMODE_INTROS", default_value=False)
     config_dict["do_kermode_lists"] = get_env_variable("DO_KERMODE_LIST", default_value=False)
     config_dict["do_turner_classic_movie_extras"] = get_env_variable("DO_TURNER_CLASSIC_MOVIE_EXTRAS", default_value=False)

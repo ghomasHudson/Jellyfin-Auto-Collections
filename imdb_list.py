@@ -6,7 +6,7 @@ import csv
 from utils import load_app_config, request_repeat_get, request_repeat_post, find_collection_with_name_or_create, get_all_collections
 
 def update_imdb_list_collections(app_config: dict):
-'''Make collections from IMDB lists'''
+    '''Make collections from IMDB lists'''
     server_url = app_config["server_url"]
     api_key= app_config["api_key"]
     user_id = app_config["user_id"]

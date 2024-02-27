@@ -11,7 +11,7 @@ import requests
 from utils import load_app_config, find_movie
 
 def update_turner_classic_movies_extras(app_config: dict):
-'''Downloads Turner classic movies intros and outros'''
+    '''Downloads Turner classic movies intros and outros'''
     server_url = app_config["server_url"]
     api_key= app_config["api_key"]
     user_id = app_config["user_id"]
