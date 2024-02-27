@@ -1,0 +1,24 @@
+version: "3"
+
+services:
+  jellyfin-auto-collections:
+    image: ghcr.io/mzrimsek/jellyfin-auto-collections
+    container_name: jellyfin-auto-collections
+    environment:
+      - JELLYFIN_SERVER_URL=${JELLYFIN_SERVER_URL}
+      - JELLYFIN_API_KEY=${JELLYFIN_API_KEY}
+      - JELLYFIN_USER_ID=${JELLYFIN_USER_ID}
+      - JELLYFIN_MOVIES_DIR=${JELLYFIN_MOVIES_DIR}
+
+      - DISABLE_TV_YEAR_CHECK=${DISABLE_TV_YEAR_CHECK:-false}
+
+      - DO_KERMODE_INTROS=${DO_KERMODE_INTROS:-false}
+      - DO_KERMODE_LISTS=${DO_KERMODE_LISTS:-false}
+      - DO_TURNER_CLASSIC_MOVIE_EXTRAS=${DO_TURNER_CLASSIC_MOVIE_EXTRAS:-false}
+      - DO_TOP_1000_MOVIES_LIST=${DO_TOP_1000_MOVIES_LIST:-false}
+      - DO_IMDB_CHARTS=${DO_IMDB_CHARTS:-false}
+      - DO_IMDB_LISTS=${DO_IMDB_LISTS:-false}
+      - DO_LETTERBOXD_LISTS=${DO_LETTERBOXD_LISTS:-false}
+    volumes:
+      - ${CONFIG_DIR}/jellyfin-auto-collections/config:/app/config
+    restart: unless-stopped

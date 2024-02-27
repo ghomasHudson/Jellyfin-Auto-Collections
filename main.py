@@ -16,6 +16,11 @@ do_imdb_charts = app_config["do_imdb_charts"]
 do_imdb_lists = app_config["do_imdb_lists"]
 do_letterboxd_lists = app_config["do_letterboxd_lists"]
 
+all_disabled = not (do_kermode_intros or do_kermode_lists or do_turner_classic_movie_extras or do_top_1000_movies_list or do_imdb_charts or do_imdb_lists or do_letterboxd_lists)
+if all_disabled:
+    print("All tasks are disabled. Enable at least one with environment settings. Please ensure config.yaml is populated as needed.")
+    exit()
+
 if do_kermode_intros:
     update_mark_kermode_reviews_intros(app_config)
 
