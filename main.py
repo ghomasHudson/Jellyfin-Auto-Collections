@@ -23,7 +23,6 @@ def execute_collection_scripts(app_config: dict = None):
     if all_disabled:
         print("All tasks are disabled. Enable at least one with environment settings. Please ensure config.yaml is populated as needed.")
         print()
-        exit()
 
     if do_kermode_intros:
         update_mark_kermode_reviews_intros(app_config)
