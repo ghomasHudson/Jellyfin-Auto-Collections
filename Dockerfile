@@ -1,10 +1,13 @@
-FROM python:3.10 as base
+FROM python:3.10-alpine as base
 
 LABEL org.opencontainers.image.source https://github.com/mzrimsek/jellyfin-auto-collections
 
 ENV RUNNING_IN_DOCKER true
 
-RUN pip install youtube-dl
+RUN apk update
+RUN apk add git
+
+RUN pip install git+https://github.com/ytdl-org/youtube-dl.git@master#egg=youtube_dl
 RUN pip install lxml
 
 FROM base as build
