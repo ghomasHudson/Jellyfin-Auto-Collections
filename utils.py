@@ -106,7 +106,7 @@ def load_env_config():
     config_dict["run_scheduled_task_immediately"] = get_env_variable("RUN_SCHEDULED_TASK_IMMEDIATELY", default_value=False)
     
     config_dict["do_kermode_intros"] = get_env_variable("DO_KERMODE_INTROS", default_value=False)
-    config_dict["do_kermode_lists"] = get_env_variable("DO_KERMODE_LIST", default_value=False)
+    config_dict["do_kermode_list"] = get_env_variable("DO_KERMODE_LIST", default_value=False)
     config_dict["do_turner_classic_movie_extras"] = get_env_variable("DO_TURNER_CLASSIC_MOVIE_EXTRAS", default_value=False)
     config_dict["do_top_1000_movies_list"] = get_env_variable("DO_TOP_1000_MOVIES_LIST", default_value=False)
     config_dict["do_imdb_charts"] = get_env_variable("DO_IMDB_CHARTS", default_value=False)

@@ -13,14 +13,14 @@ from tspdt_list import update_top_1000_movies_collection
 
 def execute_collection_scripts(app_config: dict = None):
     do_kermode_intros = app_config["do_kermode_intros"]
-    do_kermode_lists = app_config["do_kermode_lists"]
+    do_kermode_list = app_config["do_kermode_list"]
     do_turner_classic_movie_extras = app_config["do_turner_classic_movie_extras"]
     do_top_1000_movies_list = app_config["do_top_1000_movies_list"]
     do_imdb_charts = app_config["do_imdb_charts"]
     do_imdb_lists = app_config["do_imdb_lists"]
     do_letterboxd_lists = app_config["do_letterboxd_lists"]
 
-    all_disabled = not (do_kermode_intros or do_kermode_lists or do_turner_classic_movie_extras or do_top_1000_movies_list or do_imdb_charts or do_imdb_lists or do_letterboxd_lists)
+    all_disabled = not (do_kermode_intros or do_kermode_list or do_turner_classic_movie_extras or do_top_1000_movies_list or do_imdb_charts or do_imdb_lists or do_letterboxd_lists)
     if all_disabled:
         print("All tasks are disabled. Enable at least one with environment settings. Please ensure config.yaml is populated as needed.")
         print()
@@ -28,7 +28,7 @@ def execute_collection_scripts(app_config: dict = None):
     if do_kermode_intros:
         update_mark_kermode_reviews_intros(app_config)
 
-    if do_kermode_lists:
+    if do_kermode_list:
         update_mark_kermode_reviews_collection(app_config)
 
     if do_turner_classic_movie_extras:
