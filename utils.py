@@ -82,9 +82,9 @@ def get_env_variable(name: str, default_value: bool | None = None) -> bool:
             raise ValueError(f'Variable `{name}` not set!')
         else:
             value = str(default_value)
-    if value.lower() not in true_ + false_:
-        raise ValueError(f'Invalid value `{value}` for variable `{name}`')
-    return value in true_
+    if value.lower() in true_ + false_:
+        return value in true_
+    return value
 
 def load_env_config():
     '''Load environment variables from .env file'''
