@@ -12,12 +12,15 @@ def get_collection_data_from_letterboxd_list(list_id: str):
     list_name = None
     
     while True:
+        print(f"Getting page {page_number} of {list_id}")
         request_base = f'https://letterboxd.com/{list_id}/detail/by/release-earliest/page/{page_number}/'
         res = requests.get(request_base)
         
         if list_name is None:
             list_name = html.unescape(res.text.split('<h1 class="title-1 prettify">')[1].split("</h1>")[0]).strip()
+            
         page_movies = res.text.split('film-detail-content">')[1:]
+        print(f"Found {len(page_movies)} movies")
         
         if len(page_movies) == 0:
             return {"list_name": list_name, "movies": movies}
