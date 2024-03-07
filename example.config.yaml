@@ -1,0 +1,17 @@
+# IMDB list ids to create collections from
+imdb_list_ids:
+  - "ls076260497"
+  - "ls020312143"
+  - "ls055592025"
+  - "ls008765885"
+  - "ls052535080"
+  - "ls000156310"
+  - "ls027841309"
+
+# IMDB chart ids to create collections from
+imdb_chart_ids:
+  - "top"
+
+# Letterboxd list ids to create collections from
+letterboxd_list_ids:
+  - "momsaysitsok/list/r-truefilm-canon-1000-films"
