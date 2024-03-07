@@ -22,7 +22,7 @@ def update_turner_classic_movies_extras(app_config: dict):
     # Download playlist titles - delete this os.path.exists check to update playlist
     if not os.path.exists("/tmp/tcm"):
         os.mkdir("/tmp/tcm")
-        os.system("cd /tmp/tcm && youtube-dl --ignore-errors --write-info-json --skip-download 'https://www.youtube.com/@tcmintrosandwrap-ups1994/videos'")
+        os.system("cd /tmp/tcm && youtube-dl --ignore-errors --write-info-json --skip-download 'https://www.youtube.com/playlist?list=PLFMh2v5Jx1kEvXqvbPGAWz0BiUBU9xAgT'")
 
     for fn in glob.glob("/tmp/tcm/*.json"):
 
@@ -77,7 +77,7 @@ def update_turner_classic_movies_extras(app_config: dict):
                 os.system("youtube-dl -i https://youtube.com/watch?v="+data["id"] + f" --output '{movie_filepath}/{extra_title}'")
             else:
                 print("\tIntro already Exists")
-                
+
 if __name__ == "__main__":
     app_config = load_app_config()
     update_turner_classic_movies_extras(app_config)
