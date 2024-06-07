@@ -1,7 +1,7 @@
 services:
   jellyfin-auto-collections:
-    build: .
-    # image: ghcr.io/mzrimsek/jellyfin-auto-collections
+    #build: .
+    image: ghcr.io/ghomashudson/jellyfin-auto-collections:latest
     container_name: jellyfin-auto-collections
     environment:
       - CRONTAB=0 0 * * *
