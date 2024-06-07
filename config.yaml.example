@@ -1,0 +1,34 @@
+crontab: !ENV ${CRONTAB}
+timezone: !ENV ${TZ}
+jellyfin:
+  server_url: !ENV ${JELLYFIN_SERVER_URL: https://www.jellyfin.example.com}
+  api_key: !ENV ${JELLYFIN_API_KEY: 1a1111aa1a1a1aaaa11a11aa111aaa11}
+  user_id: !ENV ${JELLYFIN_USER_ID: 111111111111aaaaaaaa11111111111a}
+plugins:
+  imdb_chart:
+    enabled: true
+    list_ids:
+      - top
+      - boxoffice
+      - moviemeter
+      - tvmeter
+    clear_collection: true
+  imdb_list:
+    enabled: true
+    list_ids:
+      - ls055592025
+      - ls068305490
+      - ls087301829
+  letterboxd:
+    enabled: true
+    list_ids:
+      - fcbarcelona/list/movies-everyone-should-watch-at-least-once
+      - dave/list/official-top-250-narrative-feature-films
+  mdblist:
+    enabled: false
+    list_ids:
+      - hdlists/crazy-plot-twists
+  tspdt:
+    enabled: true
+    list_ids:
+      - 1000-greatest-films

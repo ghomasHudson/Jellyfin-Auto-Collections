@@ -5,11 +5,6 @@ LABEL org.opencontainers.image.source https://github.com/ghomasHudson/jellyfin-a
 ENV RUNNING_IN_DOCKER true
 
 RUN apk update
-RUN apk add git
-
-RUN pip install git+https://github.com/ytdl-org/youtube-dl.git@master#egg=youtube_dl
-RUN pip install lxml
-
 FROM base as build
 
 WORKDIR /app
