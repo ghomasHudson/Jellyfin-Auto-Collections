@@ -1,11 +1,6 @@
-version: "3"
-
 services:
   jellyfin-auto-collections:
-    image:
-      build:
-        context: .
-        dockerfile: Dockerfile
+    build: .
     container_name: jellyfin-auto-collections
     environment:
       - CRONTAB=0 * * * *

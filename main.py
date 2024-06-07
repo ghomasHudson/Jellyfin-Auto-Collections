@@ -42,7 +42,7 @@ def main(config):
 if __name__ == "__main__":
     logger.info("Starting up")
     logger.info("Starting initial run")
-    # main(config)
+    main(config)
 
     # Setup scheduler
     if "crontab" in config and config["crontab"] != "":
