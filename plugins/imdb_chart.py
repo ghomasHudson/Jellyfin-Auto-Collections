@@ -7,7 +7,7 @@ class IMDBChart(ListScraper):
 
     _alias_ = 'imdb_chart'
 
-    def get_list(list_id):
+    def get_list(list_id, config=None):
         res = requests.get(f'https://www.imdb.com/chart/{list_id}', headers={'User-Agent': 'Mozilla/5.0'})
         soup = bs4.BeautifulSoup(res.text, 'html.parser')
         list_name = soup.find('title').text

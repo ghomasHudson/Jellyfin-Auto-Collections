@@ -7,7 +7,7 @@ class Letterboxd(ListScraper):
 
     _alias_ = 'letterboxd'
 
-    def get_list(list_id):
+    def get_list(list_id, config=None):
         page_number = 1
         list_name = None
         movies = []

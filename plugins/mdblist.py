@@ -7,7 +7,7 @@ class MDBList(ListScraper):
 
     _alias_ = 'mdblist'
 
-    def get_list(list_id):
+    def get_list(list_id, config=None):
 
         # Get the list name
         r = requests.get(f"https://mdblist.com/lists/{list_id}")

@@ -7,7 +7,7 @@ class TSPDT(ListScraper):
 
     _alias_ = 'tspdt'
 
-    def get_list(list_id):
+    def get_list(list_id, config=None):
         r = requests.get("https://www.theyshootpictures.com/gf1000_all1000films_table.php")
         soup = bs4.BeautifulSoup(r.text, 'html.parser')
         movies = []

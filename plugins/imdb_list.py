@@ -7,7 +7,7 @@ class IMDBList(ListScraper):
 
     _alias_ = 'imdb_list'
 
-    def get_list(list_id):
+    def get_list(list_id, config=None):
         r = requests.get(f'https://www.imdb.com/list/{list_id}', headers={'Accept-Language': 'en-US', 'User-Agent': 'Mozilla/5.0'})
         soup = bs4.BeautifulSoup(r.text, 'html.parser')
         list_name = soup.find('h1').text

@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  jellyfin-auto-collections:
+    image:
+      build:
+        context: .
+        dockerfile: Dockerfile
+    container_name: jellyfin-auto-collections
+    environment:
+      - CRONTAB=0 * * * *
+      - TZ=America/New_York
+    volumes:
+      - ${CONFIG_DIR}/jellyfin-auto-collections/config:/app/config
+    restart: unless-stopped

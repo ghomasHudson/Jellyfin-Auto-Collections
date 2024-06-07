@@ -4,5 +4,5 @@ import pluginlib
 class ListScraper(object):
 
     @pluginlib.abstractmethod
-    def get_list(list_id):
+    def get_list(list_id, config=None):
         pass
