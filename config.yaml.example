@@ -1,7 +1,9 @@
+crontab: !ENV ${CRONTAB}
+timezone: !ENV ${TZ}
 jellyfin:
-  server_url: https://jellyfin.example.com
-  api_key: aaaaaaaaaaaaaaaa1111111111111111
-  user_id: 111111111111aaaaaaaa11111111111a
+  server_url: !ENV ${JELLYFIN_SERVER_URL: https://www.jellyfin.example.com}
+  api_key: !ENV ${JELLYFIN_API_KEY: 1a1111aa1a1a1aaaa11a11aa111aaa11}
+  user_id: !ENV ${JELLYFIN_USER_ID: 111111111111aaaaaaaa11111111111a}
 plugins:
   imdb_chart:
     enabled: true
