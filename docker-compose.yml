@@ -4,7 +4,7 @@ services:
     # image: ghcr.io/mzrimsek/jellyfin-auto-collections
     container_name: jellyfin-auto-collections
     environment:
-      - CRONTAB=0 * * * *
+      - CRONTAB=0 0 * * *
       - TZ=America/New_York
       - JELLYFIN_SERVER_URL=https://www.jellyfin.example.com
       - JELLYFIN_API_KEY=1a1111aa1a1a1aaaa11a11aa111aaa11
