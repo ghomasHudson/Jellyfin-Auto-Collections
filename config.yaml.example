@@ -1,0 +1,32 @@
+jellyfin:
+  server_url: https://jellyfin.example.com
+  api_key: aaaaaaaaaaaaaaaa1111111111111111
+  user_id: 111111111111aaaaaaaa11111111111a
+plugins:
+  imdb_chart:
+    enabled: true
+    list_ids:
+      - top
+      - boxoffice
+      - moviemeter
+      - tvmeter
+    clear_collection: true
+  imdb_list:
+    enabled: true
+    list_ids:
+      - ls055592025
+      - ls068305490
+      - ls087301829
+  letterboxd:
+    enabled: true
+    list_ids:
+      - fcbarcelona/list/movies-everyone-should-watch-at-least-once
+      - dave/list/official-top-250-narrative-feature-films
+  mdblist:
+    enabled: false
+    list_ids:
+      - hdlists/crazy-plot-twists
+  tspdt:
+    enabled: true
+    list_ids:
+      - 1000-greatest-films
