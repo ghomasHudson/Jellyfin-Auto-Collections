@@ -17,5 +17,6 @@ class MDBList(ListScraper):
         # Get the list items
         r = requests.get(f"https://mdblist.com/lists/{list_id}/json")
         movies = r.json()
+        movies = [{**movie, 'media_type': movie["mediatype"]} for movie in movies]
 
         return {'name': list_name, 'items': movies}
