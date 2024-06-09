@@ -1,6 +1,6 @@
 # Jellyfin Auto Collections
 
-A collection of scripts to automatically make and update [jellyfin](https://jellyfin.org) collections based on internet lists such as IMDb and letterboxd.
+A tool to automatically make and update [jellyfin](https://jellyfin.org) collections based on internet lists such as IMDb and letterboxd.
 
 ```
 Getting collections list...
