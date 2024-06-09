@@ -6,9 +6,9 @@
 crontab: !ENV ${CRONTAB}   # If set, this runs the script on a schedule. Should be in crontab format e.g. `0 0 5 * *`
 timezone: !ENV ${TZ}   # Timezone the crontab operates on.
 jellyfin:
-  server_url: !ENV ${JELLYFIN_SERVER_URL: https://www.jellyfin.example.com}
-  api_key: !ENV ${JELLYFIN_API_KEY: 1a1111aa1a1a1aaaa11a11aa111aaa11}         # Create an API key by going to: Admin>Dashboard>Advanced>API Keys
-  user_id: !ENV ${JELLYFIN_USER_ID: 111111111111aaaaaaaa11111111111a}         #ID of your jellyfin user. Found in the URL when you navigate to your user in the Dashboard.
+  server_url: !ENV ${JELLYFIN_SERVER_URL:https://www.jellyfin.example.com}
+  api_key: !ENV ${JELLYFIN_API_KEY:1a1111aa1a1a1aaaa11a11aa111aaa11}         # Create an API key by going to: Admin>Dashboard>Advanced>API Keys
+  user_id: !ENV ${JELLYFIN_USER_ID:111111111111aaaaaaaa11111111111a}         #ID of your jellyfin user. Found in the URL when you navigate to your user in the Dashboard.
 
 plugins:
   imdb_chart:
