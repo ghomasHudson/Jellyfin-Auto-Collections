@@ -30,6 +30,16 @@ Can't find Ménilmontant
 
 ![pic-selected-220609-1405-13](https://user-images.githubusercontent.com/13795113/172853971-8b5ab33b-58a9-4073-8a28-c471e9710cdc.png)
 
+## Supported List Sources
+
+- IMDB Charts - e.g. [Top 250 Movies](https://imdb.com/chart/top), [Top Box Office](https://imdb.com/chart/boxoffice)
+- IMDB Lists - e.g. [Top 100 Greatest Movie of All time](https://imdb.com/list/ls055592025)
+- Letterboxd - e.g. [Movies everyone should watch at least once...](https://letterboxd.com/fcbarcelona/list/movies-everyone-should-watch-at-least-once)
+- mdblist - e.g. [Top Movies of the week](https://mdblist.com/lists/garycrawfordgc/top-movies-of-the-week)
+- They Shoot Pictures, Don't They - [The 1,000 Greatest Films](https://www.theyshootpictures.com/gf1000_all1000films_table.php)
+
+Please feel free to send pull requests with more!
+
 ## Usage
 
 First, copy `config.yaml.example` to `config.yaml` and change the values for your specific jellyfin instance.
