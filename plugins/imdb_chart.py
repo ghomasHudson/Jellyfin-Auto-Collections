@@ -28,6 +28,7 @@ class IMDBChart(ListScraper):
             title = movie["titleText"]["text"]
             release_year = movie["releaseYear"]["year"]
             media_type = movie["titleType"]["id"]
+            imdb_id = movie["id"]
 
-            movies.append({'title': title, 'release_year': release_year, "media_type": media_type})
+            movies.append({'title': title, 'release_year': release_year, "media_type": media_type, "imdb_id": imdb_id})
         return {'name': list_name, 'items': movies}

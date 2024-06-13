@@ -16,5 +16,5 @@ class IMDBList(ListScraper):
         reader = csv.DictReader(r.text.splitlines())
         movies = []
         for row in reader:
-            movies.append({'title': row['Title'], 'release_year': row['Year'], "media_type": row['Title Type']})
+            movies.append({'title': row['Title'], 'release_year': row['Year'], "media_type": row['Title Type'], "imdb_id": row['Const']})
         return {'name': list_name, 'items': movies}
