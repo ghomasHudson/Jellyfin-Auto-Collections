@@ -36,7 +36,7 @@ def main(config):
                     jf_client.clear_collection(collection_id)
 
                 for item in list_info['items']:
-                    jf_client.add_item_to_collection(collection_id, item)
+                    jf_client.add_item_to_collection(collection_id, item, year_filter=config["plugins"][plugin_name].get("year_filter", True))
 
 
 if __name__ == "__main__":
