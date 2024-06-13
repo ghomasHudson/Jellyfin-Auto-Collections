@@ -80,23 +80,42 @@ class JellyfinClient:
             "Recursive": "true",
             "IncludeItemTypes": item["media_type"],
             "searchTerm": item["title"],
+            "fields": ["ProviderIds", "ProductionYear"]
         }
-
-        if year_filter:
-            params["year"] = item["release_year"]
+        # if year_filter:
+        #     params["year"] = item["release_year"]
 
         res = requests.get(f'{self.server_url}/Users/{self.user_id}/Items',headers={"X-Emby-Token": self.api_key}, params=params)
-        try:
-            if len(res.json()["Items"]) == 0:
-                logger.warning(f"Item {item['title']} not found in jellyfin")
-                return
-            else:
+
+        # Check if there's an exact imdb_id match first
+        match = None
+        if "imdb_id" in item:
+            for result in res.json()["Items"]:
+                if result["ProviderIds"].get("Imdb", None) == item["imdb_id"]:
+                    match = result
+                    break
+
+        # Check if there's a year match
+        if match is None and year_filter:
+            for result in res.json()["Items"]:
+                if result.get("ProductionYear", None) == item["release_year"]:
+                    match = result
+                    break
+
+        # Otherwise, just take the first result
+        if match is None and len(res.json()["Items"]) == 1:
+            match = res.json()["Items"][0]
+
+        if match is None:
+            logger.warning(f"Item {item['title']} not found in jellyfin")
+        else:
+            try:
                 item_id = res.json()["Items"][0]["Id"]
                 requests.post(f'{self.server_url}/Collections/{collection_id}/Items?ids={item_id}',headers={"X-Emby-Token": self.api_key})
                 logger.info(f"Added {item['title']} to collection")
-        except json.decoder.JSONDecodeError:
-            logger.error(f"Error adding {item['title']} to collection - JSONDecodeError")
-            return
+            except json.decoder.JSONDecodeError:
+                logger.error(f"Error adding {item['title']} to collection - JSONDecodeError")
+                return
 
     def clear_collection(self, collection_id: str):
         '''Clears a collection by removing all items from it'''
