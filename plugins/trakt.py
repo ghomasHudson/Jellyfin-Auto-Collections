@@ -97,7 +97,7 @@ class Trakt(ListScraper):
             interval = r.json()["interval"]
 
             print("Authentication with Trakt API required")
-            print(f"Please visit the following URL to get your access token: {r.json()["verification_url"]}")
+            print(f"Please visit the following URL to get your access token: {r.json()['verification_url']}")
             print()
             print(f"Your device code is: {user_code}")
             print()
