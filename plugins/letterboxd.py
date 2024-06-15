@@ -19,14 +19,14 @@ class Letterboxd(ListScraper):
             if list_name is None:
                 list_name = soup.find('h1', {'class': 'title-1 prettify'}).text
 
-            for movie in soup.find_all('div', {'class': 'film-detail-content'}):
-                movie_name = movie.find('h2', {'class': 'headline-2 prettify'}).find('a').text
-                movie_year = movie.find('small', {'class': 'metadata'}).text
+            for movie_soup in soup.find_all('div', {'class': 'film-detail-content'}):
+                movie_name = movie_soup.find('h2', {'class': 'headline-2 prettify'}).find('a').text
+                movie_year = movie_soup.find('small', {'class': 'metadata'}).text
                 movie = {"title": movie_name, "release_year": movie_year, "media_type": "movie"}
 
                 # Find the imdb id
                 if config.get("imdb_id_filter", False):
-                    r = requests.get(f"https://letterboxd.com{movie.find('a')['href']}", headers={'User-Agent': 'Mozilla/5.0'})
+                    r = requests.get(f"https://letterboxd.com{movie_soup.find('a')['href']}", headers={'User-Agent': 'Mozilla/5.0'})
                     movie_soup = bs4.BeautifulSoup(r.text, 'html.parser')
                     imdb_id = movie_soup.find("a", {"data-track-action":"IMDb"})["href"].split("/title/")[1].split("/")[0]
                     movie["imdb_id"] = imdb_id
