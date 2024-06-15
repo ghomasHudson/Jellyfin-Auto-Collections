@@ -1,3 +1,4 @@
 .env
 config.yaml
 __pycache__
+.trakt_access_token

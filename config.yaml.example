@@ -1,5 +1,5 @@
 # Sample Config file
-# 
+#
 # Note: the !ENV ${VAR:default} syntax is some syntactic sugar used by https://pypi.org/project/pyaml-env/
 # This allows variables to be passed through either in this config file or as environment variables
 #
@@ -38,3 +38,12 @@ plugins:
     enabled: true
     list_ids:
       - 1000-greatest-films
+  trakt:
+    enabled: false
+    list_ids:
+      - "movies/boxoffice"
+      - "shows/popular"
+      - walt-disney-animated-feature-films
+      - "20124699"   # Custom list ID for a user's list. Peek at the HTML source of the list page to find <input id="list-id" type="hidden" value="20124699">
+    client_id: aaaaaaa111111111 # Trakt API client ID. Create an app at https://trakt.tv/oauth/applications/new and copy the client ID
+    client_secret: aaaaaaa111111111  # Trakt API client secret. Create an app at https://trakt.tv/oauth/applications/new and copy the client secret
