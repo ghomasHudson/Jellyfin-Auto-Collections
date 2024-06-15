@@ -21,4 +21,4 @@ class TSPDT(ListScraper):
                     movie_title = suffix + " " + movie_title[:-len(suffix)-2]
             movie_year = values[4].text
             movies.append({'title': movie_title, 'release_year': movie_year, 'media_type': 'movie'})
-        return {'name': "TSPDT Top 1000 Greatest", 'items': movies}
+        return {'name': "TSPDT Top 1000 Greatest", 'items': movies, "description": "Compiled from 16,000+ film lists and ballots, The TSPDT 1,000 Greatest Films is quite possibly the most definitive collection of the most critically acclaimed films you will find."}

@@ -10,6 +10,7 @@ class Letterboxd(ListScraper):
     def get_list(list_id, config=None):
         page_number = 1
         list_name = None
+        description = None
         movies = []
 
         while True:
@@ -18,6 +19,10 @@ class Letterboxd(ListScraper):
 
             if list_name is None:
                 list_name = soup.find('h1', {'class': 'title-1 prettify'}).text
+
+            if description is None:
+                description = soup.find('div', {'class': 'body-text'}).find_all('p')
+                description = "\n".join([p.text for p in description])
 
             for movie_soup in soup.find_all('div', {'class': 'film-detail-content'}):
                 movie_name = movie_soup.find('h2', {'class': 'headline-2 prettify'}).find('a').text
@@ -38,4 +43,4 @@ class Letterboxd(ListScraper):
             else:
                 break
 
-        return {'name': list_name, 'items': movies}
+        return {'name': list_name, 'items': movies, "description": description}

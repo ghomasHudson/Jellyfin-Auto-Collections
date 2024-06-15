@@ -30,7 +30,7 @@ def main(config):
                 logger.info(f"")
                 logger.info("Getting list info for plugin: " + plugin_name + ", list id: " + list_id)
                 list_info = plugins[plugin_name].get_list(list_id, config['plugins'][plugin_name])
-                collection_id = jf_client.find_collection_with_name_or_create(list_info['name'])
+                collection_id = jf_client.find_collection_with_name_or_create(list_info['name'], list_id, list_info.get("description", None), plugin_name)
 
                 if config["plugins"][plugin_name].get("clear_collection", False):
                     jf_client.clear_collection(collection_id)

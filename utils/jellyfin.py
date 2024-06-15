@@ -43,29 +43,49 @@ class JellyfinClient:
             "enableTotalRecordCount": "false",
             "enableImages": "false",
             "Recursive": "true",
-            "includeItemTypes": "BoxSet"
+            "includeItemTypes": "BoxSet",
+            "fields": ["Name", "Id", "Tags"]
         }
         print("Getting collections list...")
         res = requests.get(f'{self.server_url}/Users/{self.user_id}/Items',headers={"X-Emby-Token": self.api_key}, params=params)
-        collections = {r["Name"]:r["Id"] for r in res.json()["Items"]}
-        return collections
+        return res.json()["Items"]
 
 
-    def find_collection_with_name_or_create(self, list_name: str) -> str:
+    def find_collection_with_name_or_create(self, list_name: str, list_id: str, description: str, plugin_name: str) -> str:
         '''Returns the collection id of the collection with the given name. If it doesn't exist, it creates a new collection and returns the id of the new collection.'''
         collection_id = None
         collections = self.get_all_collections()
+
+        # Check if list name in tags
         for collection in collections:
-            if list_name == collection:
-                logger.info("found collection: " + list_name + " (" + collections[collection] + ")")
-                collection_id = collections[collection]
+            if list_id in collection["Tags"]:
+                collection_id = collection["Id"]
                 break
+
+        # if no match - Check if list name == collection name
+        if collection_id is None:
+            for collection in collections:
+                if list_name == collection["Name"]:
+                    collection_id = collection["Id"]
+                    break
+
+        if collection_id is not None:
+            logger.info("found existing collection: " + list_name + " (" + collection_id + ")")
 
         if collection_id is None:
             # Collection doesn't exist -> Make a new one
             logger.info("No matching collection found for: " + list_name + ". Creating new collection...")
             res2 = requests.post(f'{self.server_url}/Collections',headers={"X-Emby-Token": self.api_key}, params={"name": list_name})
             collection_id = res2.json()["Id"]
+
+        # Update collection description and add tags to we can find it later
+        if collection_id is not None:
+            collection = requests.get(f'{self.server_url}/Users/{self.user_id}/Items/{collection_id}', headers={"X-Emby-Token": self.api_key}).json()
+            if collection.get("Overview", "") == "" and description is not None:
+                collection["Overview"] = description
+            collection["Tags"] = list(set(collection.get("Tags", []) + ["Jellyfin-Auto-Collections", plugin_name, list_id]))
+            r = requests.post(f'{self.server_url}/Items/{collection_id}',headers={"X-Emby-Token": self.api_key}, json=collection)
+
         return collection_id
 
 
@@ -82,8 +102,6 @@ class JellyfinClient:
             "searchTerm": item["title"],
             "fields": ["ProviderIds", "ProductionYear"]
         }
-        # if year_filter:
-        #     params["year"] = item["release_year"]
 
         res = requests.get(f'{self.server_url}/Users/{self.user_id}/Items',headers={"X-Emby-Token": self.api_key}, params=params)
 

@@ -11,6 +11,7 @@ class IMDBChart(ListScraper):
         res = requests.get(f'https://www.imdb.com/chart/{list_id}', headers={'User-Agent': 'Mozilla/5.0', 'Accept-Language': 'en-US'})
         soup = bs4.BeautifulSoup(res.text, 'html.parser')
         list_name = soup.find('title').text
+        description = soup.find('meta', property='og:description')['content']
         movies = []
 
         data = soup.find('script', id='__NEXT_DATA__')
@@ -31,4 +32,4 @@ class IMDBChart(ListScraper):
             imdb_id = movie["id"]
 
             movies.append({'title': title, 'release_year': release_year, "media_type": media_type, "imdb_id": imdb_id})
-        return {'name': list_name, 'items': movies}
+        return {'name': list_name, 'items': movies, "description": description}
