@@ -112,17 +112,17 @@ class JellyfinClient:
                 if result["ProviderIds"].get("Imdb", None) == item["imdb_id"]:
                     match = result
                     break
+        else:
+            # Check if there's a year match
+            if match is None and year_filter:
+                for result in res.json()["Items"]:
+                    if result.get("ProductionYear", None) == item["release_year"]:
+                        match = result
+                        break
 
-        # Check if there's a year match
-        if match is None and year_filter:
-            for result in res.json()["Items"]:
-                if result.get("ProductionYear", None) == item["release_year"]:
-                    match = result
-                    break
-
-        # Otherwise, just take the first result
-        if match is None and len(res.json()["Items"]) == 1:
-            match = res.json()["Items"][0]
+            # Otherwise, just take the first result
+            if match is None and len(res.json()["Items"]) == 1:
+                match = res.json()["Items"][0]
 
         if match is None:
             logger.warning(f"Item {item['title']} not found in jellyfin")
