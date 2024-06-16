@@ -14,6 +14,7 @@ class JellyfinClient:
         "tvMiniSeries": ["Program", "Series"],
         "tvMovie": ["Movie", "TvProgram", "Episode"],
         "video": ["Movie", "TvProgram", "Episode", "Series"],
+        "show": ["Program", "Series"],
     }
 
     def __init__(self, server_url: str, api_key: str, user_id: str):
