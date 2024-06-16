@@ -37,6 +37,7 @@ Can't find Ménilmontant
 - Letterboxd - e.g. [Movies everyone should watch at least once...](https://letterboxd.com/fcbarcelona/list/movies-everyone-should-watch-at-least-once)
 - mdblist - e.g. [Top Movies of the week](https://mdblist.com/lists/garycrawfordgc/top-movies-of-the-week)
 - They Shoot Pictures, Don't They - [The 1,000 Greatest Films](https://www.theyshootpictures.com/gf1000_all1000films_table.php)
+- Trakt - e.g. [Popular Movies](https://trakt.tv/movies/popular)
 
 Please feel free to send pull requests with more!
 
