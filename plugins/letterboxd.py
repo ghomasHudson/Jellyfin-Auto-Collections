@@ -17,11 +17,10 @@ class Letterboxd(ListScraper):
         while True:
             print("Page number: ", page_number)
             if list_id.endswith("/watchlist"):
-                r = requests.get(f"https://letterboxd.com/{list_id}/by/release-earliest/page/{page_number}/", headers={'User-Agent': 'Mozilla/5.0'})
                 list_name = list_id.split("/")[0] + " Watchlist"
                 description = "Watchlist for " + list_id.split("/")[0]
-            else:
-                r = requests.get(f"https://letterboxd.com/{list_id}/by/release-earliest/page/{page_number}/", headers={'User-Agent': 'Mozilla/5.0'})
+                
+            r = requests.get(f"https://letterboxd.com/{list_id}/by/release-earliest/page/{page_number}/", headers={'User-Agent': 'Mozilla/5.0'})
 
             soup = bs4.BeautifulSoup(r.text, 'html.parser')
 
