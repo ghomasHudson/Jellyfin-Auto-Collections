@@ -16,7 +16,6 @@ FROM build as final
 WORKDIR /app
 COPY --from=build /app /app
 
-RUN mkdir /app/config
 VOLUME [ "/app/config" ]
 
-ENTRYPOINT [ "python3.10", "main.py"]
+ENTRYPOINT [ "python3.10", "main.py", "--config", "/app/config/config.yaml" ]

@@ -32,8 +32,11 @@ class Letterboxd(ListScraper):
                 list_name = soup.find('h1', {'class': 'title-1 prettify'}).text
 
             if description is None:
-                description = soup.find('div', {'class': 'body-text'}).find_all('p')
-                description = "\n".join([p.text for p in description])
+                description = soup.find('div', {'class': 'body-text'})
+                if description is not None:
+                    description = "\n".join([p.text for p in description.find_all('p')])
+                else:
+                    description = ""
 
             if watchlist:
                 page = soup.find_all('li', {'class': 'poster-container'})
