@@ -2,7 +2,6 @@ import json
 from utils.base_plugin import ListScraper
 import bs4
 import requests
-import time
 from loguru import logger
 
 class Letterboxd(ListScraper):
@@ -17,7 +16,12 @@ class Letterboxd(ListScraper):
 
         while True:
             print("Page number: ", page_number)
-            r = requests.get(f"https://letterboxd.com/{list_id}/detail/by/release-earliest/page/{page_number}/", headers={'User-Agent': 'Mozilla/5.0'})
+            if list_id.endswith("/watchlist"):
+                r = requests.get(f"https://letterboxd.com/{list_id}/by/release-earliest/page/{page_number}/", headers={'User-Agent': 'Mozilla/5.0'})
+                list_name = list_id.split("/")[0] + " Watchlist"
+                description = "Watchlist for " + list_id.split("/")[0]
+            else:
+                r = requests.get(f"https://letterboxd.com/{list_id}/by/release-earliest/page/{page_number}/", headers={'User-Agent': 'Mozilla/5.0'})
 
             soup = bs4.BeautifulSoup(r.text, 'html.parser')
 
@@ -28,22 +32,26 @@ class Letterboxd(ListScraper):
                 description = soup.find('div', {'class': 'body-text'}).find_all('p')
                 description = "\n".join([p.text for p in description])
 
-            for movie_soup in soup.find_all('div', {'class': 'film-detail-content'}):
-                movie_name = movie_soup.find('h2', {'class': 'headline-2 prettify'}).find('a').text
-                movie_year = movie_soup.find('small', {'class': 'metadata'})
+            for movie_soup in soup.find_all('li', {'class': 'poster-container'}):
+                movie_name = movie_soup.find('img').attrs['alt']
+                movie = {"title": movie_name, "media_type": "movie"}
+
+                # Find the imdb id and release year
+                r = requests.get(f"https://letterboxd.com{movie_soup.find('div', {'class': 'film-poster'})['data-target-link']}", headers={'User-Agent': 'Mozilla/5.0'})
+                movie_soup = bs4.BeautifulSoup(r.text, 'html.parser')
+
+                imdb_id = movie_soup.find("a", {"data-track-action":"IMDb"})
+                movie_year = movie_soup.find("div", {"class": "releaseyear"})
+
+                if imdb_id is not None:
+                    movie["imdb_id"] = imdb_id["href"].split("/title/")[1].split("/")[0]
+
                 if movie_year is not None:
-                    movie_year = movie_year.text
-                movie = {"title": movie_name, "release_year": movie_year, "media_type": "movie"}
+                    movie["release_year"] = movie_year.text
+                    logger.info(f"Found movie: {movie['title']} ({movie.get('release_year', 'Unknown')}) ({movie.get('imdb_id', 'Unknown')})")
 
-                # Find the imdb id
-                if config.get("imdb_id_filter", False):
-                    r = requests.get(f"https://letterboxd.com{movie_soup.find('a')['href']}", headers={'User-Agent': 'Mozilla/5.0'})
-                    movie_soup = bs4.BeautifulSoup(r.text, 'html.parser')
-                    imdb_id = movie_soup.find("a", {"data-track-action":"IMDb"})
-                    if imdb_id is not None:
-                        movie["imdb_id"] = imdb_id["href"].split("/title/")[1].split("/")[0]
-
-                movies.append(movie)
+                    # If a movie doesn't have a year, that means that the movie is only just announced and we don't even know when it's coming out. We can easily ignore these because movies will have a year of release by the time they come out. 
+                    movies.append(movie)
 
             if soup.find('a', {'class': 'next'}):
                 page_number += 1
