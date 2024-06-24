@@ -18,4 +18,4 @@ COPY --from=build /app /app
 
 VOLUME [ "/app/config" ]
 
-ENTRYPOINT [ "python3.10", "main.py", "--config", "/app/config/config.json" ]
+ENTRYPOINT [ "python3.10", "main.py", "--config", "/app/config/config.yaml" ]

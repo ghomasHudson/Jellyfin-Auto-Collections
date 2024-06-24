@@ -7,8 +7,13 @@ from pyaml_env import parse_config
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
+import argparse
+parser = argparse.ArgumentParser(description='Jellyfin List Scraper')
+parser.add_argument('--config', type=str, help='Path to config file', default='config.yaml')
+args = parser.parse_args()
+
 # Load config
-config = parse_config('config.yaml', default_value=None)
+config = parse_config(args.config, default_value=None)
 
 def main(config):
     # Setup jellyfin connection
