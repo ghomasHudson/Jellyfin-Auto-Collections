@@ -16,7 +16,6 @@ class Letterboxd(ListScraper):
         movies = []
 
         while True:
-            print("Page number: ", page_number)
             r = requests.get(f"https://letterboxd.com/{list_id}/detail/by/release-earliest/page/{page_number}/", headers={'User-Agent': 'Mozilla/5.0'})
 
             soup = bs4.BeautifulSoup(r.text, 'html.parser')
@@ -25,8 +24,11 @@ class Letterboxd(ListScraper):
                 list_name = soup.find('h1', {'class': 'title-1 prettify'}).text
 
             if description is None:
-                description = soup.find('div', {'class': 'body-text'}).find_all('p')
-                description = "\n".join([p.text for p in description])
+                description = soup.find('div', {'class': 'body-text'})
+                if description is not None:
+                    description = "\n".join([p.text for p in description.find_all('p')])
+                else:
+                    description = ""
 
             for movie_soup in soup.find_all('div', {'class': 'film-detail-content'}):
                 movie_name = movie_soup.find('h2', {'class': 'headline-2 prettify'}).find('a').text
