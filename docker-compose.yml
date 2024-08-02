@@ -8,6 +8,7 @@ services:
       - TZ=America/New_York
       - JELLYFIN_SERVER_URL=https://www.jellyfin.example.com
       - JELLYFIN_API_KEY=1a1111aa1a1a1aaaa11a11aa111aaa11
+      - JELLYFIN_USER_ID=2b2222bb2b2b2bbbb22b22bb222bbb22
     volumes:
       - ${CONFIG_DIR}/jellyfin-auto-collections/config:/app/config
     restart: unless-stopped
