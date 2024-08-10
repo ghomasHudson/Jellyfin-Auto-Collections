@@ -27,7 +27,11 @@ class IMDBChart(ListScraper):
                 movie = item_data["props"]["pageProps"]["aboveTheFoldData"]
 
             title = movie["titleText"]["text"]
-            release_year = movie["releaseYear"]["year"]
+
+            release_year = None
+            if movie["releaseYear"] is not None:
+                release_year = movie["releaseYear"]["year"]
+
             media_type = movie["titleType"]["id"]
             imdb_id = movie["id"]
 
