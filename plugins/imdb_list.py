@@ -1,6 +1,6 @@
 import bs4
 import requests
-import csv
+import json
 from utils.base_plugin import ListScraper
 
 class IMDBList(ListScraper):
@@ -13,9 +13,26 @@ class IMDBList(ListScraper):
         list_name = soup.find('h1').text
         description = soup.find("div", {"class": "list-description"}).text
 
-        r = requests.get(f'https://www.imdb.com/list/{list_id}/export', headers={'Accept-Language': 'en-US', 'User-Agent': 'Mozilla/5.0'})
-        reader = csv.DictReader(r.text.splitlines())
+        ld_json = soup.find("script", {"type": "application/ld+json"}).text
+        ld_json = json.loads(ld_json)
         movies = []
-        for row in reader:
-            movies.append({'title': row['Title'], 'release_year': row['Year'], "media_type": row['Title Type'], "imdb_id": row['Const']})
+        for row in ld_json["itemListElement"]:
+            url_parts = row["item"]["url"].split("/")
+            url_parts = [p for p in url_parts if p!=""]
+
+            release_year = None
+            if config.get("add_release_year", False):
+                # Get release_date
+                r = requests.get(row["item"]["url"], headers={'Accept-Language': 'en-US', 'User-Agent': 'Mozilla/5.0', 'Accept-Language': 'en-US'})
+                soup = bs4.BeautifulSoup(r.text, 'html.parser')
+                movie_json = soup.find("script", {"type": "application/ld+json"}).text
+                release_year = json.loads(movie_json)["datePublished"].split("-")[0]
+
+            movies.append({
+                "title": row["item"]["name"],
+                "release_year": release_year,
+                "media_type": row["item"]["@type"],
+                "imdb_id": url_parts[-1]
+            })
+
         return {'name': list_name, 'items': movies, "description": description}
