@@ -160,11 +160,17 @@ class Trakt(ListScraper):
                 item = {"media_type": item_data["type"]}
             else:
                 item = {"media_type": item_types}
-            if "imdb" in item_data[item["media_type"]]["ids"]:
-                item["imdb_id"] = item_data[item["media_type"]]["ids"]["imdb"]
-            item["title"] = item_data[item["media_type"]]["title"]
-            if "year" in item_data[item["media_type"]]:
-                item["release_year"] = item_data[item["media_type"]]["year"]
+
+            if "ids" in item_data:
+                meta = item_data
+            else:
+                meta = item_data[item["media_type"]]
+
+            if "imdb" in meta["ids"]:
+                item["imdb_id"] = meta["ids"]["imdb"]
+            item["title"] = meta["title"]
+            if "year" in meta:
+                item["release_year"] = meta["year"]
             items.append(item)
 
         return {
