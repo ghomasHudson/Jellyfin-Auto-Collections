@@ -27,19 +27,31 @@ def main(config):
     loader = pluginlib.PluginLoader(modules=['plugins'])
     plugins = loader.plugins['list_scraper']
 
+    # If Jellyfin_api plugin is enabled - pass the jellyfin creds to it
+    if "jellyfin_api" in config["plugins"] and config["plugins"]["jellyfin_api"].get("enabled", False):
+        config["plugins"]["jellyfin_api"]["server_url"] = config["jellyfin"]["server_url"]
+        config["plugins"]["jellyfin_api"]["user_id"] = config["jellyfin"]["user_id"]
+        config["plugins"]["jellyfin_api"]["api_key"] = config["jellyfin"]["api_key"]
+
     # Update jellyfin with lists
     for plugin_name in config['plugins']:
         if config['plugins'][plugin_name]["enabled"] and plugin_name in plugins:
             for list_id in config['plugins'][plugin_name]["list_ids"]:
                 logger.info(f"")
                 logger.info(f"")
-                logger.info("Getting list info for plugin: " + plugin_name + ", list id: " + list_id)
+                logger.info(f"Getting list info for plugin: {plugin_name}, list id: {list_id}")
+
+                # Match list items to jellyfin items
                 list_info = plugins[plugin_name].get_list(list_id, config['plugins'][plugin_name])
+
+                # Find jellyfin collection or create it
                 collection_id = jf_client.find_collection_with_name_or_create(list_info['name'], list_id, list_info.get("description", None), plugin_name)
 
                 if config["plugins"][plugin_name].get("clear_collection", False):
+                    # Optionally clear everything from the collection first
                     jf_client.clear_collection(collection_id)
 
+                # Add items to the collection
                 for item in list_info['items']:
                     jf_client.add_item_to_collection(collection_id, item, year_filter=config["plugins"][plugin_name].get("year_filter", True))
 

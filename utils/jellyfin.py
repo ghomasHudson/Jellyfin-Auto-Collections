@@ -59,7 +59,7 @@ class JellyfinClient:
 
         # Check if list name in tags
         for collection in collections:
-            if list_id in collection["Tags"]:
+            if json.dumps(list_id) in collection["Tags"]:
                 collection_id = collection["Id"]
                 break
 
@@ -84,7 +84,7 @@ class JellyfinClient:
             collection = requests.get(f'{self.server_url}/Users/{self.user_id}/Items/{collection_id}', headers={"X-Emby-Token": self.api_key}).json()
             if collection.get("Overview", "") == "" and description is not None:
                 collection["Overview"] = description
-            collection["Tags"] = list(set(collection.get("Tags", []) + ["Jellyfin-Auto-Collections", plugin_name, list_id]))
+            collection["Tags"] = list(set(collection.get("Tags", []) + ["Jellyfin-Auto-Collections", plugin_name, json.dumps(list_id)]))
             r = requests.post(f'{self.server_url}/Items/{collection_id}',headers={"X-Emby-Token": self.api_key}, json=collection)
 
         return collection_id
