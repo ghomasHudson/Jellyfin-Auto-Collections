@@ -13,6 +13,7 @@ class Letterboxd(ListScraper):
         list_name = None
         description = None
         movies = []
+        config = config or {}
 
         while True:
             print("Page number: ", page_number)
