@@ -18,14 +18,21 @@ class Letterboxd(ListScraper):
         while True:
             print("Page number: ", page_number)
             watchlist = list_id.endswith("/watchlist")
+            likeslist = list_id.endswith("/likes/films")
 
             if watchlist:
-                r = requests.get(f"https://letterboxd.com/{list_id}/by/release-earliest/page/{page_number}/", headers={'User-Agent': 'Mozilla/5.0'})
-
                 list_name = list_id.split("/")[0] + " Watchlist"
                 description = "Watchlist for " + list_id.split("/")[0]
-            else:
-                r = requests.get(f"https://letterboxd.com/{list_id}/detail/by/release-earliest/page/{page_number}/", headers={'User-Agent': 'Mozilla/5.0'})
+            elif likeslist:
+                list_name = list_id.split("/")[0] + " Likes"
+                description = "Likes list for " + list_id.split("/")[0]
+
+            url_format = "https://letterboxd.com/{list_id}{maybe_detail}/by/release-earliest/page/{page_number}/"
+            maybe_detail = "" if watchlist or likeslist else "/detail"
+            r = requests.get(
+                url_format.format(list_id=list_id, maybe_detail=maybe_detail, page_number=page_number),
+                headers={'User-Agent': 'Mozilla/5.0'},
+            )
 
             soup = bs4.BeautifulSoup(r.text, 'html.parser')
 
@@ -39,13 +46,13 @@ class Letterboxd(ListScraper):
                 else:
                     description = ""
 
-            if watchlist:
+            if watchlist or likeslist:
                 page = soup.find_all('li', {'class': 'poster-container'})
             else: 
                 page = soup.find_all('div', {'class': 'film-detail-content'})
 
             for movie_soup in page:
-                if watchlist:
+                if watchlist or likeslist:
                     movie = {"title": movie_soup.find('img').attrs['alt'], "media_type": "movie"}
                     link = movie_soup.find('div', {'class': 'film-poster'})['data-target-link']
                 else: 
