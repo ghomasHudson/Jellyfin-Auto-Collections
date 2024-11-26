@@ -2,8 +2,6 @@ name: Publish Docker image
 on:
   push:
     branches: [master]
-  pull_request:
-    branches: [master]
 jobs:
   multi_push_to_registry:
     runs-on: ubuntu-latest
