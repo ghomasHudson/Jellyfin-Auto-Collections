@@ -38,7 +38,7 @@ Can't find Ménilmontant
 - mdblist - e.g. [Top Movies of the week](https://mdblist.com/lists/garycrawfordgc/top-movies-of-the-week)
 - They Shoot Pictures, Don't They - [The 1,000 Greatest Films](https://www.theyshootpictures.com/gf1000_all1000films_table.php)
 - Trakt - e.g. [Popular Movies](https://trakt.tv/movies/popular)
-- Jellyfin API Queries - You make lists which match a particular filter from the [Jellyfin API](https://api.jellyfin.org/). See [#52](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/issues/52) for some usage examples. 
+- Jellyfin API Queries - Make lists which match a particular filter from the [Jellyfin API](https://api.jellyfin.org/). See [#52](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/issues/52) for some usage examples. 
 
 Please feel free to send pull requests with more!
 
@@ -56,7 +56,24 @@ Then run `python main.py`.
 
 ### Docker
 
-The easiest way to get going is to use the provided `docker-compose.yml` configuration. Whatever directory you end up mapping to the config directory needs to contain your updated `config.yaml` file.
+The easiest way to get going is to use the provided `docker-compose.yml` configuration. Whatever directory you end up mapping to the `/app/config` directory needs to contain your updated `config.yaml` file:
+
+```yaml
+services:
+  jellyfin-auto-collections:
+    image: ghcr.io/ghomashudson/jellyfin-auto-collections:latest
+    container_name: jellyfin-auto-collections
+    environment:
+      - CRONTAB=0 0 * * *
+      - TZ=America/New_York
+      - JELLYFIN_SERVER_URL=https://www.jellyfin.example.com
+      - JELLYFIN_API_KEY=1a1111aa1a1a1aaaa11a11aa111aaa11
+      - JELLYFIN_USER_ID=2b2222bb2b2b2bbbb22b22bb222bbb22
+    volumes:
+      - ${CONFIG_DIR}/jellyfin-auto-collections/config:/app/config
+    restart: unless-stopped
+```
+
 
 #### Configuration Options
 
