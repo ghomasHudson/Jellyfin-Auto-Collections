@@ -3,14 +3,16 @@ import urllib.parse
 from loguru import logger
 
 class JellyseerrClient:
-    def __init__(self, server_url: str, api_key: str):
+    def __init__(self, server_url: str, api_key:str=None, email: str=None, password: str=None, user_type: str="local"):
         # Fix common url issues
         if server_url.endswith("/"):
             server_url = server_url[:-1]  # Remove trailing slash 
         if not server_url.endswith("/api/v1"):
             server_url += "/api/v1"
         self.server_url = server_url
-        self.api_key = api_key
+
+        if user_type not in ["local", "plex", "jellyfin"]:
+            raise Exception("Invalid user type. Must be one of: local, plex, jellyfin")
 
         # Check if server is reachable
         try:
@@ -20,18 +22,34 @@ class JellyseerrClient:
         except requests.exceptions.ConnectionError:
             raise Exception("Jellyseerr Server is not reachable")
 
-        # Check if api key is valid
-        r = requests.get(f"{self.server_url}/auth/me")
+        self.session = requests.Session()
+        self.api_key = api_key
+        if api_key is not None:
+            r = self.session.headers.update({
+                "X-Api-Key": api_key
+            })
+            if r.status_code != 200:
+                raise Exception("Invalid jellyseerr API Key")
+        if email is not None and password is not None:
+            r = self.session.post(f"{self.server_url}/auth/{user_type}", json={
+                "email": email,
+                "password": password
+            })
+            if r.status_code != 200:
+                raise Exception("Invalid jellyseerr email or password")
+
+        # Check if user is authenticated
+        r = self.session.get(f"{self.server_url}/auth/me")
+        if r.status_code != 200:
+            raise Exception("jellyseerr user is not authenticated")
 
 
     def make_request(self, item):
         '''Request item from jellyseerr'''
 
         # Search for item
-        r = requests.get(f"{self.server_url}/search", params={
+        r = self.session.get(f"{self.server_url}/search", params={
             "query": urllib.parse.quote_plus(item["title"])
-        }, headers={
-            "X-Api-Key": self.api_key
         })
         
         # Find matching item
@@ -57,11 +75,9 @@ class JellyseerrClient:
             if "mediaInfo" not in result or result["mediaInfo"]["jellyfinMediaId"] is None:
                 # If it's not already in Jellyfin
                 # Request item
-                r = requests.post(f"{self.server_url}/request", json={
+                r = self.session.post(f"{self.server_url}/request", json={
                     "mediaType": result["mediaType"],
                     "mediaId": mediaId,
-                }, headers={
-                    "X-Api-Key": self.api_key
                 })
                 logger.info(f"Requested {item['title']} from Jellyseerr")
 

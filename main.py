@@ -27,7 +27,10 @@ def main(config):
     if "jellyseerr" in config:
         js_client = JellyseerrClient(
             server_url=config['jellyseerr']['server_url'],
-            api_key=config['jellyseerr']['api_key']
+            api_key=config['jellyseerr'].get('api_key', None),
+            email=config['jellyseerr'].get('email', None),
+            password=str(config['jellyseerr'].get('password', None)),
+            user_type=str(config['jellyseerr'].get('user_type', "local"))
         )
     else:
         js_client = None
