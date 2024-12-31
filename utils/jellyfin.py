@@ -127,14 +127,18 @@ class JellyfinClient:
 
         if match is None:
             logger.warning(f"Item {item['title']} ({item.get('release_year','N/A')}) {item.get('imdb_id','')} not found in jellyfin")
+            return False
         else:
             try:
                 item_id = res.json()["Items"][0]["Id"]
                 requests.post(f'{self.server_url}/Collections/{collection_id}/Items?ids={item_id}',headers={"X-Emby-Token": self.api_key})
                 logger.info(f"Added {item['title']} to collection")
+                return True
             except json.decoder.JSONDecodeError:
                 logger.error(f"Error adding {item['title']} to collection - JSONDecodeError")
-                return
+        return False
+
+
 
     def clear_collection(self, collection_id: str):
         '''Clears a collection by removing all items from it'''
