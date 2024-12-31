@@ -72,7 +72,9 @@ class Letterboxd(ListScraper):
                     movie_soup = bs4.BeautifulSoup(r.text, 'html.parser')
 
                     imdb_id = movie_soup.find("a", {"data-track-action":"IMDb"})
-                    movie_year = movie_soup.find("div", {"class": "releaseyear"})
+                    movie_year = movie_soup\
+                        .find("div", {"class": "metablock"})\
+                        .find("div", {"class": "releaseyear"})
 
                     if imdb_id is not None:
                         movie["imdb_id"] = imdb_id["href"].split("/title/")[1].split("/")[0]
