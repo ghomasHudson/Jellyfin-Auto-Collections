@@ -1,5 +1,6 @@
 from typing import cast
 from utils.jellyfin import JellyfinClient
+from utils.jellyseerr import JellyseerrClient
 import pluginlib
 from loguru import logger
 from pyaml_env import parse_config
@@ -23,6 +24,14 @@ def main(config):
         user_id=config['jellyfin']['user_id']
     )
 
+    if "jellyseerr" in config:
+        js_client = JellyseerrClient(
+            server_url=config['jellyseerr']['server_url'],
+            api_key=config['jellyseerr']['api_key']
+        )
+    else:
+        js_client = None
+
     # Load plugins
     loader = pluginlib.PluginLoader(modules=['plugins'])
     plugins = loader.plugins['list_scraper']
@@ -45,7 +54,12 @@ def main(config):
                 list_info = plugins[plugin_name].get_list(list_id, config['plugins'][plugin_name])
 
                 # Find jellyfin collection or create it
-                collection_id = jf_client.find_collection_with_name_or_create(list_info['name'], list_id, list_info.get("description", None), plugin_name)
+                collection_id = jf_client.find_collection_with_name_or_create(
+                    list_info['name'], 
+                    list_id,
+                    list_info.get("description", None),
+                    plugin_name
+                )
 
                 if config["plugins"][plugin_name].get("clear_collection", False):
                     # Optionally clear everything from the collection first
@@ -53,7 +67,14 @@ def main(config):
 
                 # Add items to the collection
                 for item in list_info['items']:
-                    jf_client.add_item_to_collection(collection_id, item, year_filter=config["plugins"][plugin_name].get("year_filter", True))
+                    matched = jf_client.add_item_to_collection(
+                        collection_id,
+                        item,
+                        year_filter=config["plugins"][plugin_name].get("year_filter", True)
+                    )
+                    if not matched and js_client is not None:
+                        js_client.make_request(item)
+
 
 
 if __name__ == "__main__":
