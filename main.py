@@ -4,6 +4,8 @@ from utils.jellyseerr import JellyseerrClient
 import pluginlib
 from loguru import logger
 from pyaml_env import parse_config
+import os
+import sys
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -12,6 +14,12 @@ import argparse
 parser = argparse.ArgumentParser(description='Jellyfin List Scraper')
 parser.add_argument('--config', type=str, help='Path to config file', default='config.yaml')
 args = parser.parse_args()
+
+# Set logging level
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+# Configure Loguru logger
+logger.remove()  # Remove default configuration
+logger.add(sys.stderr, level=log_level)
 
 # Load config
 config = parse_config(args.config, default_value=None)
@@ -58,7 +66,7 @@ def main(config):
 
                 # Find jellyfin collection or create it
                 collection_id = jf_client.find_collection_with_name_or_create(
-                    list_info['name'], 
+                    list_info['name'],
                     list_id,
                     list_info.get("description", None),
                     plugin_name

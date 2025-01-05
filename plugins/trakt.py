@@ -89,6 +89,7 @@ class Trakt(ListScraper):
             # If we have already authenticated, read the access token from the file
             with open(Trakt._access_token_file, 'r') as f:
                 access_token = f.read()
+            logger.debug("Existing access token found")
         else:
             # If we have not authenticated, get the access token from the user
             r = requests.post("https://api.trakt.tv/oauth/device/code", headers=headers, json={"client_id": config["client_id"]})
@@ -132,9 +133,11 @@ class Trakt(ListScraper):
 
         access_token = Trakt._get_auth_token(config)
         headers["Authorization"] = f"Bearer {access_token}"
+        logger.debug("Access token loaded")
 
         if list_id.startswith("shows/") or list_id.startswith("movies/"):
             # Chart
+            logger.debug("Trakt chart list")
             r = requests.get(f"https://api.trakt.tv/{list_id}", headers=headers)
             list_name = Trakt._chart_types[list_id]["title"]
             description = Trakt._chart_types[list_id]["description"]
@@ -146,6 +149,7 @@ class Trakt(ListScraper):
 
             items_data = r.json()
         else:
+            logger.debug("Trakt User list")
             r = requests.get(f"https://api.trakt.tv/lists/{list_id}", headers=headers)
             list_name = r.json()["name"]
             description = r.json()["description"]
@@ -154,6 +158,7 @@ class Trakt(ListScraper):
 
 
         # Process the items
+        logger.debug("Processing items.")
         items = []
         for item_data in items_data:
             if "type" in item_data:
