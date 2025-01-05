@@ -12,6 +12,17 @@ class JellyfinAPI(ListScraper):
         '''Call jellyfin API
            list_id should be a dict to pass to https://api.jellyfin.org/#tag/Items/operation/GetItems
         '''
+
+        # If list name/desc have been manually specified - grab them
+        list_name = f"{list_id}"
+        list_desc = f"Movies which match the jellyfin API query: {list_id}"
+        if "list_name" in list_id:
+            list_name = list_id["list_name"]
+            del list_id["list_name"]
+        if "list_desc" in list_id:
+            list_name = list_id["list_desc"]
+            del list_id["list_desc"]
+
         params = {
             "enableTotalRecordCount": "false",
             "enableImages": "false",
@@ -32,7 +43,7 @@ class JellyfinAPI(ListScraper):
             })
 
         return {
-            "name": f"{list_id}",
-            "description": "Movies which match the jellyfin API query: {list_id}",
+            "name": list_name,
+            "description": list_desc,
             "items": items
         }
