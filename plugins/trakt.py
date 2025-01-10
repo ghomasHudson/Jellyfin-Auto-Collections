@@ -97,11 +97,11 @@ class Trakt(ListScraper):
             user_code = r.json()["user_code"]
             interval = r.json()["interval"]
 
-            print("Authentication with Trakt API required")
-            print(f"Please visit the following URL to get your access token: {r.json()['verification_url']}")
-            print()
-            print(f"Your device code is: {user_code}")
-            print()
+            logger.info("Authentication with Trakt API required")
+            logger.info(f"Please visit the following URL to get your access token: {r.json()['verification_url']}")
+            logger.info("")
+            logger.info(f"Your device code is: {user_code}")
+            logger.info("")
 
             # Poll the API until the user has authenticated
             while True:
@@ -119,7 +119,7 @@ class Trakt(ListScraper):
             # Save the access token to a file
             with open(Trakt._access_token_file, 'w') as f:
                 f.write(access_token)
-            print("Successfully authenticated with Trakt API")
+            logger.info("Successfully authenticated with Trakt API")
         return access_token
 
 

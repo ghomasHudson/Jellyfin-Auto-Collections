@@ -16,7 +16,7 @@ class Letterboxd(ListScraper):
         config = config or {}
 
         while True:
-            print("Page number: ", page_number)
+            logger.info("Page number: ", page_number)
             watchlist = list_id.endswith("/watchlist")
             likeslist = list_id.endswith("/likes/films")
 
@@ -48,22 +48,22 @@ class Letterboxd(ListScraper):
 
             if watchlist or likeslist:
                 page = soup.find_all('li', {'class': 'poster-container'})
-            else: 
+            else:
                 page = soup.find_all('div', {'class': 'film-detail-content'})
 
             for movie_soup in page:
                 if watchlist or likeslist:
                     movie = {"title": movie_soup.find('img').attrs['alt'], "media_type": "movie"}
                     link = movie_soup.find('div', {'class': 'film-poster'})['data-target-link']
-                else: 
+                else:
                     movie = {"title": movie_soup.find('h2', {'class': 'headline-2 prettify'}).find('a').text, "media_type": "movie"}
                     movie_year = movie_soup.find('small', {'class': 'metadata'})
                     if movie_year is not None:
                         movie["release_year"] = movie_year.text
-                        
+
                     link = movie_soup.find('a')['href']
-                
-                
+
+
                 if config.get("imdb_id_filter", False) or 'release_year' not in movie:
                     logger.info(f"Getting release year and imdb details for: {movie['title']}")
 
@@ -81,8 +81,8 @@ class Letterboxd(ListScraper):
 
                     if movie_year is not None:
                         movie["release_year"] = movie_year.text
-                       
-                # If a movie doesn't have a year, that means that the movie is only just announced and we don't even know when it's coming out. We can easily ignore these because movies will have a year of release by the time they come out. 
+
+                # If a movie doesn't have a year, that means that the movie is only just announced and we don't even know when it's coming out. We can easily ignore these because movies will have a year of release by the time they come out.
                 if 'release_year' in movie:
                     movies.append(movie)
 
