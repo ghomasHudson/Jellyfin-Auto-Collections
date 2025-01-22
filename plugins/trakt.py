@@ -136,6 +136,7 @@ class Trakt(ListScraper):
         logger.debug("Access token loaded")
 
         if list_id.startswith("users"):
+            logger.debug("Trakt Private User list")
             r = requests.get(f"https://api.trakt.tv/{list_id}", headers=headers)
             components = list_id.split("/")
             list_name = f"{components[1]}'s {components[2]}"
@@ -155,7 +156,7 @@ class Trakt(ListScraper):
 
             items_data = r.json()
         else:
-            logger.debug("Trakt User list")
+            logger.debug("Trakt Public User list")
             r = requests.get(f"https://api.trakt.tv/lists/{list_id}", headers=headers)
             list_name = r.json()["name"]
             description = r.json()["description"]
