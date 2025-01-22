@@ -135,7 +135,7 @@ class Trakt(ListScraper):
         headers["Authorization"] = f"Bearer {access_token}"
         logger.debug("Access token loaded")
 
-        if list_id.startswith("users"):
+        if list_id.startswith("users/"):
             logger.debug("Trakt Private User list")
             r = requests.get(f"https://api.trakt.tv/{list_id}", headers=headers)
             components = list_id.split("/")
