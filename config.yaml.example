@@ -55,4 +55,6 @@ plugins:
         limit: ["3"]
         sortBy: ["Random"]
         includeItemTypes: ["Movie"]
+        list_name: "Random Highly-Rated Movies" # Optional human-readable collection name
+        list_desc: "A random selection of highly popular movies"
       - genres: ["Mystery"]
