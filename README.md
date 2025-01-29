@@ -37,8 +37,8 @@ Can't find Ménilmontant
 - Letterboxd - e.g. [Movies everyone should watch at least once...](https://letterboxd.com/fcbarcelona/list/movies-everyone-should-watch-at-least-once)
 - mdblist - e.g. [Top Movies of the week](https://mdblist.com/lists/garycrawfordgc/top-movies-of-the-week)
 - They Shoot Pictures, Don't They - [The 1,000 Greatest Films](https://www.theyshootpictures.com/gf1000_all1000films_table.php)
-- Trakt - e.g. [Popular Movies](https://trakt.tv/movies/popular). See the [Wiki](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/wiki/Trakt-Plugin-Setup) for instructions.
-- Jellyfin API Queries - Make lists which match a particular filter from the [Jellyfin API](https://api.jellyfin.org/). See [#52](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/issues/52) for some usage examples. 
+- Trakt - e.g. [Popular Movies](https://trakt.tv/movies/popular). See the [Wiki](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/wiki/Plugin-%E2%80%90-Trakt) for instructions.
+- Jellyfin API Queries - Make lists which match a particular filter from the [Jellyfin API](https://api.jellyfin.org/). See the [Wiki](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/wiki/Plugin-%E2%80%90-Jellyfin-API) for some usage examples. 
 
 Please feel free to send pull requests with more!
 
