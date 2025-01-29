@@ -135,7 +135,14 @@ class Trakt(ListScraper):
         headers["Authorization"] = f"Bearer {access_token}"
         logger.debug("Access token loaded")
 
-        if list_id.startswith("shows/") or list_id.startswith("movies/"):
+        if list_id.startswith("users/"):
+            logger.debug("Trakt Default User list")
+            r = requests.get(f"https://api.trakt.tv/{list_id}", headers=headers)
+            components = list_id.split("/")
+            list_name = f"{components[1]}'s {components[2]}"
+            description = f"{components[1]}'s {components[2]}"
+            items_data = r.json()
+        elif list_id.startswith("shows/") or list_id.startswith("movies/"):
             # Chart
             logger.debug("Trakt chart list")
             r = requests.get(f"https://api.trakt.tv/{list_id}", headers=headers)
