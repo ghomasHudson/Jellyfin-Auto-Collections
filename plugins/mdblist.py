@@ -9,6 +9,8 @@ class MDBList(ListScraper):
 
     def get_list(list_id, config=None):
 
+        list_id = list_id.strip("/")
+
         # Get the list name
         r = requests.get(f"https://mdblist.com/lists/{list_id}")
         soup = bs4.BeautifulSoup(r.text, 'html.parser')
