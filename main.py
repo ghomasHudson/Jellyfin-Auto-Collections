@@ -81,7 +81,8 @@ def main(config):
                     matched = jf_client.add_item_to_collection(
                         collection_id,
                         item,
-                        year_filter=config["plugins"][plugin_name].get("year_filter", True)
+                        year_filter=config["plugins"][plugin_name].get("year_filter", True),
+                        jellyfin_query_parameters=config["jellyfin"].get("query_parameters", {})
                     )
                     if not matched and js_client is not None:
                         js_client.make_request(item)

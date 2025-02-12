@@ -90,7 +90,7 @@ class JellyfinClient:
         return collection_id
 
 
-    def add_item_to_collection(self, collection_id: str, item, year_filter: bool = True):
+    def add_item_to_collection(self, collection_id: str, item, year_filter: bool = True, jellyfin_query_parameters={}):
         '''Adds an item to a collection based on item name and release year'''
 
         item["media_type"] = self.imdb_to_jellyfin_type_map.get(item["media_type"], item["media_type"])
@@ -103,6 +103,8 @@ class JellyfinClient:
             "searchTerm": item["title"],
             "fields": ["ProviderIds", "ProductionYear"]
         }
+
+        params = {**params, **jellyfin_query_parameters}
 
         res = requests.get(f'{self.server_url}/Users/{self.user_id}/Items',headers={"X-Emby-Token": self.api_key}, params=params)
 
