@@ -22,6 +22,10 @@ logger.remove()  # Remove default configuration
 logger.add(sys.stderr, level=log_level)
 
 # Load config
+if not os.path.exists(args.config):
+    logger.error(f"{args.config} does not exist.")
+    logger.error(f"Copy config.yaml.example to {args.config} and add your jellyfin config.")
+    raise Exception("No config file found.")
 config = parse_config(args.config, default_value=None)
 
 def main(config):
