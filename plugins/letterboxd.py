@@ -16,7 +16,7 @@ class Letterboxd(ListScraper):
         config = config or {}
 
         while True:
-            logger.info("Page number: ", page_number)
+            logger.info(f"Page number: {page_number}")
             watchlist = list_id.endswith("/watchlist")
             likeslist = list_id.endswith("/likes/films")
 
