@@ -173,6 +173,10 @@ class Trakt(ListScraper):
             else:
                 item = {"media_type": item_types}
 
+            if item["media_type"] == "season":
+                # Ignore seasons
+                continue
+
             if "ids" in item_data:
                 meta = item_data
             else:
@@ -180,7 +184,10 @@ class Trakt(ListScraper):
 
             if "imdb" in meta["ids"]:
                 item["imdb_id"] = meta["ids"]["imdb"]
-            item["title"] = meta["title"]
+            try:
+                item["title"] = meta["title"]
+            except:
+                breakpoint()
             if "year" in meta:
                 item["release_year"] = meta["year"]
             items.append(item)
