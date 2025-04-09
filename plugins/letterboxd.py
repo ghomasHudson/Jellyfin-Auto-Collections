@@ -69,7 +69,7 @@ class Letterboxd(ListScraper):
 
 
                 if config.get("imdb_id_filter", False) or 'release_year' not in movie:
-                    logger.info(f"Getting release year and imdb details for: {movie['title']}")
+                    logger.debug(f"Getting release year and imdb details for: {movie['title']}")
 
                     # Find the imdb id and release year
                     r = session.get(f"https://letterboxd.com{link}", headers={'User-Agent': 'Mozilla/5.0'})

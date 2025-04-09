@@ -184,6 +184,8 @@ class JellyfinClient:
                 item_id = res.json()["Items"][0]["Id"]
                 requests.post(f'{self.server_url}/Collections/{collection_id}/Items?ids={item_id}',headers={"X-Emby-Token": self.api_key})
                 logger.info(f"Added {item['title']} to collection")
+                logger.debug(f"\tList item: {item}")
+                logger.debug(f"\tMatched JF item: {match}")
                 return True
             except json.decoder.JSONDecodeError:
                 logger.error(f"Error adding {item['title']} to collection - JSONDecodeError")
