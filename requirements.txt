@@ -19,7 +19,6 @@ six==1.16.0
 soupsieve==2.5
 tzlocal==5.2
 urllib3==2.2.1
-matplotlib==3.10.1
 numpy==2.2.4
 packaging==24.2
 pillow==11.1.0
