@@ -21,13 +21,13 @@ plugins:
     clear_collection: true   # If set, this empties out the collection before re-adding. Useful for lists which change often.
   imdb_list:
     enabled: true
-    imdb_id_filter: false # Uses the imdb id for better matching. This does slow the script down though!
     list_ids:
       - ls055592025
       - ls068305490
       - ls087301829
   letterboxd:
     enabled: true
+    imdb_id_filter: false # Uses the imdb id for better matching. This does slow the script down though!
     list_ids:
       - fcbarcelona/list/movies-everyone-should-watch-at-least-once
       - dave/list/official-top-250-narrative-feature-films
