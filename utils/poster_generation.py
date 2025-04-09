@@ -2,7 +2,6 @@ import os
 import requests
 from loguru import logger
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
-from matplotlib import font_manager
 import math
 from io import BytesIO
 import concurrent.futures
