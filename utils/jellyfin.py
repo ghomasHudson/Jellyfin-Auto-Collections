@@ -181,7 +181,7 @@ class JellyfinClient:
             return False
         else:
             try:
-                item_id = res.json()["Items"][0]["Id"]
+                item_id = match["Id"]
                 requests.post(f'{self.server_url}/Collections/{collection_id}/Items?ids={item_id}',headers={"X-Emby-Token": self.api_key})
                 logger.info(f"Added {item['title']} to collection")
                 logger.debug(f"\tList item: {item}")
