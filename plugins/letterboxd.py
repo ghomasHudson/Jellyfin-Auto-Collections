@@ -3,6 +3,7 @@ from utils.base_plugin import ListScraper
 import bs4
 import requests
 from loguru import logger
+from requests_cache import CachedSession, FileCache
 
 class Letterboxd(ListScraper):
 
@@ -14,6 +15,9 @@ class Letterboxd(ListScraper):
         description = None
         movies = []
         config = config or {}
+
+        # Cache for movie pages - so we don't have to refetch imdb_ids
+        session = CachedSession(backend='filesystem')
 
         while True:
             logger.info(f"Page number: {page_number}")
@@ -68,7 +72,7 @@ class Letterboxd(ListScraper):
                     logger.info(f"Getting release year and imdb details for: {movie['title']}")
 
                     # Find the imdb id and release year
-                    r = requests.get(f"https://letterboxd.com{link}", headers={'User-Agent': 'Mozilla/5.0'})
+                    r = session.get(f"https://letterboxd.com{link}", headers={'User-Agent': 'Mozilla/5.0'})
                     movie_soup = bs4.BeautifulSoup(r.text, 'html.parser')
 
                     imdb_id = movie_soup.find("a", {"data-track-action":"IMDb"})
