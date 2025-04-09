@@ -27,7 +27,7 @@ plugins:
       - ls087301829
   letterboxd:
     enabled: true
-    imdb_id_filter: false # Uses the imdb id for better matching. This does slow the script down though!
+    imdb_id_filter: true # Uses the imdb id for better matching. This does slow the script down though!
     list_ids:
       - fcbarcelona/list/movies-everyone-should-watch-at-least-once
       - dave/list/official-top-250-narrative-feature-films
