@@ -1,6 +1,9 @@
 import requests
 from loguru import logger
+from base64 import b64encode
 import json
+import concurrent.futures
+from .poster_generation import fetch_collection_posters, safe_download, create_mosaic, get_font
 
 
 class JellyfinClient:
@@ -47,7 +50,7 @@ class JellyfinClient:
             "includeItemTypes": "BoxSet",
             "fields": ["Name", "Id", "Tags"]
         }
-        print("Getting collections list...")
+        logger.info("Getting collections list...")
         res = requests.get(f'{self.server_url}/Users/{self.user_id}/Items',headers={"X-Emby-Token": self.api_key}, params=params)
         return res.json()["Items"]
 
@@ -88,6 +91,52 @@ class JellyfinClient:
             r = requests.post(f'{self.server_url}/Items/{collection_id}',headers={"X-Emby-Token": self.api_key}, json=collection)
 
         return collection_id
+
+    def has_poster(self, collection_id):
+        '''Check if a collection already has a poster'''
+        poster_url = f"{self.server_url}/Items/{collection_id}/Images/Primary"
+        r = requests.get(poster_url, headers={"X-Emby-Token": self.api_key})
+        if r.status_code == 404:
+            return False
+        return True
+
+
+    def make_poster(self, collection_id, collection_name, mosaic_limit=20, google_font_url="https://fonts.googleapis.com/css2?family=Dosis:wght@800&display=swap"):
+
+        # Check if collection poster exists
+        poster_urls = fetch_collection_posters(self.server_url, self.api_key, self.user_id, collection_id)[:mosaic_limit]
+        headers={"X-Emby-Token": self.api_key}
+
+        # Use a ThreadPoolExecutor to download images in parallel
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            futures = [executor.submit(safe_download, url, headers) for url in poster_urls]
+            results = [future.result() for future in concurrent.futures.as_completed(futures)]
+
+        # Filter out any failed downloads (None values)
+        poster_images = [img for img in results if img is not None]
+
+        font_path = get_font(google_font_url)
+
+        if poster_images:
+            safe_name = collection_name.replace(" ", "_").replace("/", "_")
+            output_path = f"/tmp/{safe_name}_cover.jpg"
+            create_mosaic(poster_images, collection_name, output_path, font_path)
+        else:
+            logger.warning(f"No posters available for collection '{collection_name}'. Skipping mosaic generation.")
+
+        # Upload
+
+        from PIL import Image
+        img = Image.open(output_path)  # or whatever format
+        img = img.convert("RGB")  # Ensures it's safe for JPEG
+        img.save(output_path, format="JPEG")
+
+        with open(output_path, 'rb') as f:
+            img_data = f.read()
+        encoded_data = b64encode(img_data)
+
+        headers["Content-Type"] = "image/jpeg"
+        r = requests.post(f"{self.server_url}/Items/{collection_id}/Images/Primary", headers=headers, data=encoded_data)
 
 
     def add_item_to_collection(self, collection_id: str, item, year_filter: bool = True, jellyfin_query_parameters={}):

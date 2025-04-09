@@ -91,6 +91,11 @@ def main(config):
                     if not matched and js_client is not None:
                         js_client.make_request(item)
 
+                # Add a poster image if collection doesn't have one
+                if not jf_client.has_poster(collection_id):
+                    logger.info("Collection has no poster - generating one")
+                    jf_client.make_poster(collection_id, list_info["name"])
+
 
 
 if __name__ == "__main__":
