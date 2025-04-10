@@ -196,6 +196,11 @@ class JellyfinClient:
     def clear_collection(self, collection_id: str):
         '''Clears a collection by removing all items from it'''
         res = requests.get(f'{self.server_url}/Users/{self.user_id}/Items',headers={"X-Emby-Token": self.api_key}, params={"Recursive": "true", "parentId": collection_id})
-        ids = [item["Id"] for item in res.json()["Items"]]
-        requests.delete(f'{self.server_url}/Collections/{collection_id}/Items',headers={"X-Emby-Token": self.api_key}, params={"ids": ",".join(ids)})
+        all_ids = [item["Id"] for item in res.json()["Items"]]
+
+        # chunk ids into groups of 10
+        all_ids = [all_ids[i:i + 10] for i in range(0, len(all_ids), 10)]
+        for ids in all_ids:
+             requests.delete(f'{self.server_url}/Collections/{collection_id}/Items',headers={"X-Emby-Token": self.api_key}, params={"ids": ",".join(ids)})
+
         logger.info(f"Cleared collection {collection_id}")
