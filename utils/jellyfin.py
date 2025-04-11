@@ -123,6 +123,7 @@ class JellyfinClient:
             create_mosaic(poster_images, collection_name, output_path, font_path)
         else:
             logger.warning(f"No posters available for collection '{collection_name}'. Skipping mosaic generation.")
+            return
 
         # Upload
 
