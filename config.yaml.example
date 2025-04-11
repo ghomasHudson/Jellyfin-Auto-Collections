@@ -77,3 +77,8 @@ plugins:
     enabled: false
     list_ids:
       - movies
+  criterion_channel:
+    enabled: false
+    list_ids:
+      - hong-kong-hits
+      - british-new-wave
