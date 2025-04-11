@@ -48,6 +48,15 @@ plugins:
       - "20124699"   # Custom list ID for a user's list. Peek at the HTML source of the list page to find <input id="list-id" type="hidden" value="20124699">
     client_id: aaaaaaa111111111 # Trakt API client ID. Create an app at https://trakt.tv/oauth/applications/new and copy the client ID
     client_secret: aaaaaaa111111111  # Trakt API client secret. Create an app at https://trakt.tv/oauth/applications/new and copy the client secret
+  arr:
+    enabled: false
+    server_configs:
+      - base_url: https://radarr.example.com
+        api_key: aaaaaaaaaaaaaaaa1111111111111111
+      - base_url: https://sonarr.example.com
+        api_key: aaaaaaaaaaaaaaaa1111111111111111
+    list_ids:
+      - my_tag
   jellyfin_api:
     enabled: false
     list_ids:
