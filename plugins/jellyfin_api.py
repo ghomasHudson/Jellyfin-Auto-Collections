@@ -20,7 +20,7 @@ class JellyfinAPI(ListScraper):
             list_name = list_id["list_name"]
             del list_id["list_name"]
         if "list_desc" in list_id:
-            list_name = list_id["list_desc"]
+            list_desc = list_id["list_desc"]
             del list_id["list_desc"]
 
         params = {
