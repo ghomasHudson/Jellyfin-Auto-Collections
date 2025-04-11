@@ -71,7 +71,6 @@ services:
       - JELLYFIN_USER_ID=2b2222bb2b2b2bbbb22b22bb222bbb22
     volumes:
       - ${CONFIG_DIR}/jellyfin-auto-collections/config:/app/config
-    restart: unless-stopped
 ```
 
 
@@ -82,5 +81,5 @@ services:
 | JELLYFIN_SERVER_URL            | The URL of your Jellyfin instance                                                                            |
 | JELLYFIN_API_KEY               | Generated API Key                                                                                            |
 | JELLYFIN_USER_ID               | UserID from the URL of your Profile in Jellyfin                                                              |
-| CRONTAB                        | The interval the scripts will be run on in crontab syntax. Blank to disable scheduling.                      |
+| CRONTAB                        | The interval the scripts will be run on in crontab syntax. Blank to disable scheduling (Make sure you're not using the docker [restart policy](https://docs.docker.com/engine/containers/start-containers-automatically/)) .                      |
 | TZ                             | Timezone the interval will be run in. No effect is scheduling is disabled.                                   |
