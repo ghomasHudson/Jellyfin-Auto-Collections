@@ -18,6 +18,7 @@ class ListScraper(object):
 ```
 {
   "name": "Ultimate top 100 list",
+  "description": "100 of my fav films",
   "items": [
     {"title": "My Movie", "release_year": "2021", "media_type": "movie"},
      ...
