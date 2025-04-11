@@ -38,7 +38,8 @@ Can't find Ménilmontant
 - mdblist - e.g. [Top Movies of the week](https://mdblist.com/lists/garycrawfordgc/top-movies-of-the-week)
 - They Shoot Pictures, Don't They - [The 1,000 Greatest Films](https://www.theyshootpictures.com/gf1000_all1000films_table.php)
 - Trakt - e.g. [Popular Movies](https://trakt.tv/movies/popular). See the [Wiki](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/wiki/Plugin-%E2%80%90-Trakt) for instructions.
-- Jellyfin API Queries - Make lists which match a particular filter from the [Jellyfin API](https://api.jellyfin.org/). See the [Wiki](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/wiki/Plugin-%E2%80%90-Jellyfin-API) for some usage examples. 
+- Jellyfin API Queries - Make lists which match a particular filter from the [Jellyfin API](https://api.jellyfin.org/). See the [Wiki](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/wiki/Plugin-%E2%80%90-Jellyfin-API) for some usage examples.
+- Radarr/Sonarr - Make collections from your *arr tags. 
 
 Please feel free to send pull requests with more!
 
