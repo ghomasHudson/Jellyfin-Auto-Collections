@@ -73,3 +73,7 @@ plugins:
         list_name: "Random Highly-Rated Movies" # Optional human-readable collection name
         list_desc: "A random selection of highly popular movies"
       - genres: ["Mystery"]
+  popular_movies: # popular-movies-data.stevenlu.com
+    enabled: false
+    list_ids:
+      - movies
