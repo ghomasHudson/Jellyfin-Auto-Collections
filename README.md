@@ -1,6 +1,6 @@
 # Jellyfin Auto Collections
 
-A tool to automatically make and update [jellyfin](https://jellyfin.org) collections based on internet lists such as IMDb and letterboxd.
+A tool to automatically make and update [jellyfin](https://jellyfin.org) collections based on internet lists such as IMDb and letterboxd. Also syncs with [Overseerr](https://overseerr.dev/)/[Jellyseerr](https://github.com/Fallenbagel/jellyseerr).
 
 ```
 Getting collections list...
