@@ -39,7 +39,7 @@ Can't find Ménilmontant
 - They Shoot Pictures, Don't They - [The 1,000 Greatest Films](https://www.theyshootpictures.com/gf1000_all1000films_table.php)
 - Trakt - e.g. [Popular Movies](https://trakt.tv/movies/popular). See the [Wiki](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/wiki/Plugin-%E2%80%90-Trakt) for instructions.
 - [Steven Lu Popular movies](https://github.com/sjlu/popular-movies)
-- - [The Criterion Channel](https://www.criterionchannel.com/new-collections)
+- [The Criterion Channel](https://www.criterionchannel.com/new-collections)
 - Jellyfin API Queries - Make lists which match a particular filter from the [Jellyfin API](https://api.jellyfin.org/). See the [Wiki](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/wiki/Plugin-%E2%80%90-Jellyfin-API) for some usage examples.
 - Radarr/Sonarr - Make collections from your *arr tags.
 
