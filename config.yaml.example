@@ -87,3 +87,8 @@ plugins:
     list_ids:
       - wonderful-movies-you-might-have-missed
       - 40-must-have-mafiacrime-movies
+  bfi:
+    enabled: true
+    list_ids:
+      - 10-great-films-featuring-dual-performances
+      - 5-things-watch-this-weekend-24-26-january-2025
