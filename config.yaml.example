@@ -82,3 +82,8 @@ plugins:
     list_ids:
       - hong-kong-hits
       - british-new-wave
+  listmania:
+    enabled: false
+    list_ids:
+      - wonderful-movies-you-might-have-missed
+      - 40-must-have-mafiacrime-movies
