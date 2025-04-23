@@ -60,7 +60,17 @@ def main(config):
     # Update jellyfin with lists
     for plugin_name in config['plugins']:
         if config['plugins'][plugin_name]["enabled"] and plugin_name in plugins:
-            for list_id in config['plugins'][plugin_name]["list_ids"]:
+            for list_entry in config['plugins'][plugin_name]["list_ids"]:
+                if isinstance(list_entry, dict):
+                    if "list_id" in list_entry:
+                        list_id = list_entry["list_id"]
+                    else:
+                        list_id = list_entry
+                    list_name = list_entry.get("list_name", None)
+                else:
+                    list_id = list_entry
+                    list_name = None
+
                 logger.info(f"")
                 logger.info(f"")
                 logger.info(f"Getting list info for plugin: {plugin_name}, list id: {list_id}")
@@ -70,7 +80,7 @@ def main(config):
 
                 # Find jellyfin collection or create it
                 collection_id = jf_client.find_collection_with_name_or_create(
-                    list_info['name'],
+                    list_name or list_info['name'],
                     list_id,
                     list_info.get("description", None),
                     plugin_name
