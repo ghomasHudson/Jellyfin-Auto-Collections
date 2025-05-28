@@ -2,6 +2,7 @@ import bs4
 import requests
 import json
 from utils.base_plugin import ListScraper
+from loguru import logger
 
 #from arrapi import SonarrAPI, RadarrAPI
 
@@ -34,6 +35,7 @@ class Arr(ListScraper):
             for item_id in r.json().get("movieIds", []):
                 item_r = requests.get(server_config["base_url"] + f"/api/v3/movie/{item_id}", params=server_params)
                 item_r = item_r.json()
+                logger.debug(f"Response from Arr server: {item_r}")
                 items.append({
                     "title": item_r["title"],
                     "release_year": item_r["year"],
@@ -44,6 +46,7 @@ class Arr(ListScraper):
             for item_id in r.json().get("seriesIds", []):
                 item_r = requests.get(server_config["base_url"] + f"/api/v3/series/{item_id}", params=server_params)
                 item_r = item_r.json()
+                logger.debug(f"Response from Arr server: {item_r}")
                 items.append({
                     "title": item_r["title"],
                     "release_year": item_r["year"],
