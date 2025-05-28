@@ -40,7 +40,7 @@ class Arr(ListScraper):
                     "title": item_r["title"],
                     "release_year": item_r["year"],
                     "media_type": "movie",
-                    "imdb_id": item_r["imdbId"]
+                    "imdb_id": item_r.get("imdbId", None)
                 })
 
             for item_id in r.json().get("seriesIds", []):
@@ -51,7 +51,7 @@ class Arr(ListScraper):
                     "title": item_r["title"],
                     "release_year": item_r["year"],
                     "media_type": "show",
-                    "imdb_id": item_r["imdbId"]
+                    "imdb_id": item_r.get("imdbId", None)
                 })
 
 
