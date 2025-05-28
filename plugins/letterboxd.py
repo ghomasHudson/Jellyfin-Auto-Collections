@@ -53,14 +53,14 @@ class Letterboxd(ListScraper):
             if watchlist or likeslist:
                 page = soup.find_all('li', {'class': 'poster-container'})
             else:
-                page = soup.find_all('div', {'class': 'film-detail-content'})
+                page = soup.find_all('article')
 
             for movie_soup in page:
                 if watchlist or likeslist:
                     movie = {"title": movie_soup.find('img').attrs['alt'], "media_type": "movie"}
                     link = movie_soup.find('div', {'class': 'film-poster'})['data-target-link']
                 else:
-                    movie = {"title": movie_soup.find('h2', {'class': 'headline-2 prettify'}).find('a').text, "media_type": "movie"}
+                    movie = {"title": movie_soup.find('h2').find('a').text, "media_type": "movie"}
                     movie_year = movie_soup.find('small', {'class': 'metadata'})
                     if movie_year is not None:
                         movie["release_year"] = movie_year.text
