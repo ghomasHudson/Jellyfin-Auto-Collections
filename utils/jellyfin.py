@@ -182,6 +182,8 @@ class JellyfinClient:
 
         if match is None:
             logger.warning(f"Item {item['title']} ({item.get('release_year','N/A')}) {item.get('imdb_id','')} not found in jellyfin")
+            logger.debug(f"List Candidate: {item}")
+            logger.debug(f"JF Search: {res.json()['Items']}")
             return False
         else:
             try:
