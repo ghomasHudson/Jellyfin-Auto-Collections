@@ -32,9 +32,12 @@ class JellyfinClient:
             raise Exception("Server is not reachable")
 
         # Check if api key is valid
-        res = requests.get(f"{self.server_url}/Users/{self.user_id}", headers={"X-Emby-Token": self.api_key})
+        res = requests.get(f"{self.server_url}/System/Info", headers={"X-Emby-Token": self.api_key})
         if res.status_code != 200:
             raise Exception("Invalid API key")
+
+        jf_info = res.json()
+        logger.debug(f"Jellyfin Version: {jf_info['Version']}")
 
         # Check if user id is valid
         res = requests.get(f"{self.server_url}/Users/{self.user_id}", headers={"X-Emby-Token": self.api_key})
