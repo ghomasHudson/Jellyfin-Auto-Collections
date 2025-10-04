@@ -65,7 +65,7 @@ class JellyseerrClient:
             elif "releaseDate" in result:
                 # Try year match
                 release_year = result["releaseDate"].split("-")[0]
-                if release_year == str(item["release_year"]):
+                if release_year == str(item["release_year"]).strip():
                     mediaId = result["id"]
                     logger.debug(f"Found year match for {item['title']}")
                     break
