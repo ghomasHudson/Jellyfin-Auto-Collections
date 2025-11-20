@@ -3,7 +3,7 @@ from utils.base_plugin import ListScraper
 import bs4
 import requests
 from loguru import logger
-from requests_cache import CachedSession, FileCache
+from requests_cache import CachedSession
 
 class Letterboxd(ListScraper):
 
@@ -41,53 +41,62 @@ class Letterboxd(ListScraper):
             soup = bs4.BeautifulSoup(r.text, 'html.parser')
 
             if list_name is None:
-                list_name = soup.find('h1', {'class': 'title-1 prettify'}).text
+                title_tag = soup.find('h1', {'class': 'title-1 prettify'})
+                if title_tag:
+                    list_name = title_tag.text
 
             if description is None:
-                description = soup.find('div', {'class': 'body-text'})
-                if description is not None:
-                    description = "\n".join([p.text for p in description.find_all('p')])
+                desc_tag = soup.find('div', {'class': 'body-text'})
+                if desc_tag is not None:
+                    description = "\n".join([p.text for p in desc_tag.find_all('p')])
                 else:
                     description = ""
 
-            if watchlist or likeslist:
-                page = soup.find_all('li', {'class': 'poster-container'})
-            else:
-                page = soup.find_all('article')
+            # NEW: handle both poster-container and poster-item
+            page = soup.find_all('li', {'class': 'poster-container'})
+            if not page:
+                page = soup.find_all('div', {'class': 'poster-item'})
+
+            logger.debug(f"Found {len(page)} film entries on page {page_number}")
 
             for movie_soup in page:
-                if watchlist or likeslist:
-                    movie = {"title": movie_soup.find('img').attrs['alt'], "media_type": "movie"}
-                    link = movie_soup.find('div', {'class': 'film-poster'})['data-target-link']
+                img = movie_soup.find('img')
+                if img:
+                    movie = {"title": img.get('alt'), "media_type": "movie"}
                 else:
-                    movie = {"title": movie_soup.find('h2').find('a').text, "media_type": "movie"}
-                    movie_year = movie_soup.find('small', {'class': 'metadata'})
-                    if movie_year is not None:
-                        movie["release_year"] = movie_year.text
+                    continue
 
-                    link = movie_soup.find('a')['href']
+                # Link to film detail page
+                link_tag = movie_soup.find('div', {'class': 'film-poster'})
+                if link_tag and link_tag.has_attr('data-target-link'):
+                    link = link_tag['data-target-link']
+                else:
+                    link = None
 
+                # Release year
+                year_tag = movie_soup.find('span', {'class': 'year'})
+                if year_tag:
+                    movie["release_year"] = year_tag.text
 
-                if config.get("imdb_id_filter", False) or 'release_year' not in movie:
-                    logger.debug(f"Getting release year and imdb details for: {movie['title']}")
-
-                    # Find the imdb id and release year
+                # IMDb ID lookup if needed
+                if link and (config.get("imdb_id_filter", False) or 'release_year' not in movie):
+                    logger.debug(f"Fetching IMDb/year for: {movie['title']}")
                     r = session.get(f"https://letterboxd.com{link}", headers={'User-Agent': 'Mozilla/5.0'})
-                    movie_soup = bs4.BeautifulSoup(r.text, 'html.parser')
+                    detail_soup = bs4.BeautifulSoup(r.text, 'html.parser')
 
-                    imdb_id = movie_soup.find('a', href=lambda href: href and 'imdb.com/title' in href)
-                    movie_year = movie_soup.find("div", class_="details").find("span", class_="releasedate")
-
-                    if imdb_id is not None:
+                    imdb_id = detail_soup.find('a', href=lambda href: href and 'imdb.com/title' in href)
+                    if imdb_id:
                         movie["imdb_id"] = imdb_id["href"].split("/title/")[1].split("/")[0]
 
-                    if movie_year is not None:
-                        movie["release_year"] = movie_year.text
+                    year_tag = detail_soup.find("span", class_="year")
+                    if year_tag:
+                        movie["release_year"] = year_tag.text
 
-                # If a movie doesn't have a year, that means that the movie is only just announced and we don't even know when it's coming out. We can easily ignore these because movies will have a year of release by the time they come out.
                 if 'release_year' in movie:
                     movies.append(movie)
+                    logger.debug(f"Added movie: {movie}")
 
+            # Pagination
             if soup.find('a', {'class': 'next'}):
                 page_number += 1
             else:
