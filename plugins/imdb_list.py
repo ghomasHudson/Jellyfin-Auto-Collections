@@ -8,7 +8,7 @@ class IMDBList(ListScraper):
     _alias_ = 'imdb_list'
 
     def get_list(list_id, config=None):
-        r = requests.get(f'https://www.imdb.com/list/{list_id}', headers={'Accept-Language': 'en-US', 'User-Agent': 'Mozilla/5.0', 'Accept-Language': 'en-US'})
+        r = requests.get(f'https://www.imdb.com/list/{list_id}', headers={'Accept-Language': 'en-US', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'Accept-Language': 'en-US'})
         soup = bs4.BeautifulSoup(r.text, 'html.parser')
         list_name = soup.find('h1').text
         description = soup.find("div", {"class": "list-description"}).text
@@ -23,7 +23,7 @@ class IMDBList(ListScraper):
             release_year = None
             if config.get("add_release_year", False):
                 # Get release_date
-                r = requests.get(row["item"]["url"], headers={'Accept-Language': 'en-US', 'User-Agent': 'Mozilla/5.0', 'Accept-Language': 'en-US'})
+                r = requests.get(row["item"]["url"], headers={'Accept-Language': 'en-US', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'Accept-Language': 'en-US'})
                 soup = bs4.BeautifulSoup(r.text, 'html.parser')
                 movie_json = soup.find("script", {"type": "application/ld+json"}).text
                 release_year = json.loads(movie_json)["datePublished"].split("-")[0]
