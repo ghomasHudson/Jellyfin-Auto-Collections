@@ -145,16 +145,24 @@ class Trakt(ListScraper):
         elif list_id.startswith("shows/") or list_id.startswith("movies/"):
             # Chart
             logger.debug("Trakt chart list")
-            r = requests.get(f"https://api.trakt.tv/{list_id}", headers=headers)
+
+            current_page = 1
+            items_data = []
+            while True:
+                r = requests.get(f"https://api.trakt.tv/{list_id}?page={current_page}", headers=headers)
+                items_data += r.json()
+                page_count = int(r.headers.get("X-Pagination-Page-Count", 1))
+                logger.debug(f"Page {current_page}/{page_count}")
+                if current_page >= page_count:
+                    break
+                current_page += 1
+
             list_name = Trakt._chart_types[list_id]["title"]
             description = Trakt._chart_types[list_id]["description"]
-
             if list_id.startswith("shows/"):
                 item_types = "show"
             else:
                 item_types = "movie"
-
-            items_data = r.json()
         else:
             logger.debug("Trakt User list")
             r = requests.get(f"https://api.trakt.tv/lists/{list_id}", headers=headers)
