@@ -51,7 +51,7 @@ class Letterboxd(ListScraper):
                     description = ""
 
             if watchlist or likeslist:
-                page = soup.find_all('li', {'class': 'poster-container'})
+                page = soup.find_all('div', {'class': 'poster'})
             else:
                 page = soup.find_all('article')
 
@@ -63,7 +63,7 @@ class Letterboxd(ListScraper):
                     movie = {"title": movie_soup.find('h2').find('a').text, "media_type": "movie"}
                     movie_year = movie_soup.find('small', {'class': 'metadata'})
                     if movie_year is not None:
-                        movie["release_year"] = movie_year.text
+                        movie["release_year"] = movie_year.text.strip()
 
                     link = movie_soup.find('a')['href']
 
@@ -82,15 +82,13 @@ class Letterboxd(ListScraper):
                         movie["imdb_id"] = imdb_id["href"].split("/title/")[1].split("/")[0]
 
                     if movie_year is not None:
-                        movie["release_year"] = movie_year.text
+                        movie["release_year"] = movie_year.text.strip()
 
                 # If a movie doesn't have a year, that means that the movie is only just announced and we don't even know when it's coming out. We can easily ignore these because movies will have a year of release by the time they come out.
                 if 'release_year' in movie:
                     movies.append(movie)
-
             if soup.find('a', {'class': 'next'}):
                 page_number += 1
             else:
                 break
-
         return {'name': list_name, 'items': movies, "description": description}
