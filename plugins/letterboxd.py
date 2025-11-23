@@ -31,7 +31,10 @@ class Letterboxd(ListScraper):
                 list_name = list_id.split("/")[0] + " Likes"
                 description = "Likes list for " + list_id.split("/")[0]
 
-            url_format = "https://letterboxd.com/{list_id}{maybe_detail}/by/release-earliest/page/{page_number}/"
+            if watchlist:
+                url_format = "https://letterboxd.com/{list_id}{maybe_detail}/page/{page_number}/"
+            else:
+                url_format = "https://letterboxd.com/{list_id}{maybe_detail}/by/release-earliest/page/{page_number}/"
             maybe_detail = "" if watchlist or likeslist else "/detail"
             r = requests.get(
                 url_format.format(list_id=list_id, maybe_detail=maybe_detail, page_number=page_number),
@@ -50,15 +53,17 @@ class Letterboxd(ListScraper):
                 else:
                     description = ""
 
-            if watchlist or likeslist:
-                page = soup.find_all('div', {'class': 'poster'})
+            if watchlist:
+                page = soup.find_all('li', {'class': 'griditem'})
+            elif likeslist:
+                page = soup.find_all('li', {'class': 'posteritem'})
             else:
                 page = soup.find_all('article')
 
             for movie_soup in page:
                 if watchlist or likeslist:
                     movie = {"title": movie_soup.find('img').attrs['alt'], "media_type": "movie"}
-                    link = movie_soup.find('div', {'class': 'film-poster'})['data-target-link']
+                    link = movie_soup.find("div").attrs["data-target-link"]
                 else:
                     movie = {"title": movie_soup.find('h2').find('a').text, "media_type": "movie"}
                     movie_year = movie_soup.find('small', {'class': 'metadata'})
