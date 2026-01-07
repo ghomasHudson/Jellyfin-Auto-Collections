@@ -8,8 +8,9 @@ RUN apk update
 FROM base AS build
 
 WORKDIR /app
-COPY . .
+COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
+COPY . .
 
 FROM build AS final
 
