@@ -1,17 +1,17 @@
-FROM python:3.10-alpine as base
+FROM python:3.10-alpine AS base
 
 LABEL org.opencontainers.image.source https://github.com/ghomasHudson/jellyfin-auto-collections
 
 ENV RUNNING_IN_DOCKER true
 
 RUN apk update
-FROM base as build
+FROM base AS build
 
 WORKDIR /app
 COPY . .
 RUN pip install -r requirements.txt
 
-FROM build as final
+FROM build AS final
 
 WORKDIR /app
 COPY --from=build /app /app
