@@ -8,6 +8,7 @@ cycler==0.12.1
 fonttools==4.57.0
 idna==3.7
 kiwisolver==1.4.8
+letterboxdpy
 loguru==0.7.2
 pluginlib==0.9.2
 pyaml-env==1.2.1
