@@ -3,14 +3,42 @@ from loguru import logger
 from letterboxdpy.list import List
 from letterboxdpy.watchlist import Watchlist
 from letterboxdpy.movie import Movie
+import json
+import os
 
 class Letterboxd(ListScraper):
 
     _alias_ = 'letterboxd'
+    _cache_file_ = '.letterboxd_cache.json'
+
+    @staticmethod
+    def _load_cache():
+        """Load the movie details cache from disk."""
+        if os.path.exists(Letterboxd._cache_file_):
+            try:
+                with open(Letterboxd._cache_file_, 'r') as f:
+                    return json.load(f)
+            except Exception as e:
+                logger.warning(f"Failed to load cache: {e}")
+                return {}
+        return {}
+
+    @staticmethod
+    def _save_cache(cache):
+        """Save the movie details cache to disk."""
+        try:
+            with open(Letterboxd._cache_file_, 'w') as f:
+                json.dump(cache, f, indent=2)
+        except Exception as e:
+            logger.warning(f"Failed to save cache: {e}")
 
     def get_list(list_id, config=None):
         config = config or {}
         movies = []
+
+        # Load cache
+        cache = Letterboxd._load_cache()
+        cache_updated = False
 
         # Determine list type and parse list_id
         watchlist = list_id.endswith("/watchlist")
@@ -62,25 +90,50 @@ class Letterboxd(ListScraper):
             if config.get("imdb_id_filter", False) or "year" not in movie_data:
                 slug = movie_data.get("slug")
                 if slug:
-                    try:
-                        logger.debug(f"Fetching IMDb ID for: {movie['title']}")
-                        movie_instance = Movie(slug)
+                    # Check cache first
+                    if slug in cache:
+                        logger.debug(f"Using cached data for: {movie['title']}")
+                        cached_data = cache[slug]
+                        if cached_data.get("imdb_id"):
+                            movie["imdb_id"] = cached_data["imdb_id"]
+                        if "release_year" not in movie and cached_data.get("year"):
+                            movie["release_year"] = str(cached_data["year"])
+                    else:
+                        # Fetch from API if not in cache
+                        try:
+                            logger.debug(f"Fetching IMDb ID for: {movie['title']}")
+                            movie_instance = Movie(slug)
 
-                        # Get IMDb link and extract ID
-                        if movie_instance.imdb_link:
-                            imdb_id = movie_instance.imdb_link.split("/title/")[1].split("/")[0]
-                            movie["imdb_id"] = imdb_id
+                            # Prepare cache entry
+                            cache_entry = {}
 
-                        # Get year if not already present
-                        if "release_year" not in movie and movie_instance.year:
-                            movie["release_year"] = str(movie_instance.year)
+                            # Get IMDb link and extract ID
+                            if movie_instance.imdb_link:
+                                imdb_id = movie_instance.imdb_link.split("/title/")[1].split("/")[0]
+                                movie["imdb_id"] = imdb_id
+                                cache_entry["imdb_id"] = imdb_id
 
-                    except Exception as e:
-                        logger.warning(f"Failed to fetch details for {movie['title']}: {e}")
+                            # Get year if not already present
+                            if movie_instance.year:
+                                cache_entry["year"] = movie_instance.year
+                                if "release_year" not in movie:
+                                    movie["release_year"] = str(movie_instance.year)
+
+                            # Save to cache
+                            cache[slug] = cache_entry
+                            cache_updated = True
+
+                        except Exception as e:
+                            logger.warning(f"Failed to fetch details for {movie['title']}: {e}")
 
             # Only add movies with a release year
             if "release_year" in movie:
                 movies.append(movie)
+
+        # Save cache if it was updated
+        if cache_updated:
+            Letterboxd._save_cache(cache)
+            logger.info(f"Cache updated with new movie details")
 
         return {'name': list_name, 'items': movies, "description": description}
 
