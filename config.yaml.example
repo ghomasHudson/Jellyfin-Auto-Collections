@@ -33,6 +33,8 @@ plugins:
       - ls087301829
   trakt:
     enabled: false
+    clear_poster: true      #Clears poster before importing items (causes new generation)
+    clear_collection: true  #Clears collection before importing items
     max_items: 20           #Sets a limit of the number of items pulled from Trakt. It does not take into account if finds a match for the item. if not set it pulls all.
     list_ids:
       - movies/trending     #The most watched movies right now.
@@ -51,7 +53,7 @@ plugins:
       - shows/played        #The most played (a single user can watch multiple episodes multiple times) shows for the last week.
       - shows/anticipated   #The most anticipated shows based on the number of lists a show appears on.
       - users/draackje/lists/pixar-feature-films # Add user lists by adding the last part of the url (if private it has to be the same user that has the api)
-      - "20124699"          # Custom list ID for a user's list. (deprecated)
+      #- 20124699          # Custom list ID for a user's list. (deprecated)
     client_id: aaaaaaa111111111 # Trakt API client ID. Create an app at https://trakt.tv/oauth/applications/new and copy the client ID
     client_secret: aaaaaaa111111111  # Trakt API client secret. Create an app at https://trakt.tv/oauth/applications/new and copy the client secret
   letterboxd:

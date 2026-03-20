@@ -145,7 +145,7 @@ class Trakt(ListScraper):
         access_token = Trakt._get_auth_token(config)
         # If authentication failed, return an empty list structure
         if not access_token:
-            return {"name": "Error", "description": "Auth Failed", "items": []}
+            return None
             
         headers["Authorization"] = f"Bearer {access_token}"
         logger.debug("Access token loaded")
@@ -157,7 +157,7 @@ class Trakt(ListScraper):
             r = requests.get(f"https://api.trakt.tv/{list_id}", headers=headers)
             if r.status_code != 200:
                 logger.error(f"Trakt user list '{list_id}' not found! Status: {r.status_code}")
-                return {"name": "Error", "description": "List Not Found", "items": []}
+                return None
             
             list_data = r.json()
             list_name = list_data.get("name", "User List")
@@ -223,7 +223,7 @@ class Trakt(ListScraper):
             # Safety check: If list is private or ID is wrong, Trakt returns 404 or 401
             if r.status_code != 200:
                 logger.error(f"Trakt list '{list_id}' not found or private (Status {r.status_code}). Skipping.")
-                return {"name": "Error", "description": "List Not Found", "items": []}
+                return None
 
             try:
                 list_data = r.json()
@@ -231,7 +231,7 @@ class Trakt(ListScraper):
                 description = list_data.get("description", "")
             except Exception:
                 logger.error(f"Failed to parse metadata for Trakt list '{list_id}'.")
-                return {"name": "Error", "description": "Invalid API Response", "items": []}
+                return None
 
             # Fetch the Items
             r = requests.get(f"https://api.trakt.tv/lists/{list_id}/items", headers=headers)

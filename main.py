@@ -78,6 +78,11 @@ def main(config):
 
                 # Match list items to jellyfin items
                 list_info = plugins[plugin_name].get_list(list_id, config['plugins'][plugin_name])
+                
+                # check if list is empty or returns None
+                if list_info is None or not list_info.get("items"):
+                    logger.warning(f"Skipping {list_id} because no data was returned.")
+                    continue
 
                 # Find jellyfin collection or create it
                 collection_id = jf_client.find_collection_with_name_or_create(
@@ -90,7 +95,9 @@ def main(config):
                 if config["plugins"][plugin_name].get("clear_collection", False):
                     # Optionally clear everything from the collection first
                     jf_client.clear_collection(collection_id)
-                    # If we are clearing the items, we should also clear the poster to ensure a new one is generated for the updated list.
+
+                if config["plugins"][plugin_name].get("clear_poster", False):
+                    # Optionally clear poster
                     jf_client.delete_poster(collection_id)
 
                 # Add items to the collection
