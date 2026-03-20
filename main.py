@@ -84,6 +84,12 @@ def main(config):
                     logger.warning(f"Skipping {list_id} because no data was returned.")
                     continue
 
+                # Simple max items logic for all plugins.
+                max_items = config['plugins'][plugin_name].get("max_items")
+                if max_items and len(list_info['items']) > max_items:
+                    logger.info(f"Applying limit of {max_items} items to {list_id}")
+                    list_info['items'] = list_info['items'][:max_items]
+
                 # Find jellyfin collection or create it
                 collection_id = jf_client.find_collection_with_name_or_create(
                     list_name or list_info['name'],
