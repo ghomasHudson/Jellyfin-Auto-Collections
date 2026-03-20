@@ -134,7 +134,7 @@ class Trakt(ListScraper):
     def get_list(list_id, config=None):
 
         # Force user input to lowercase to prevent case-sensitive crashes
-        list_id = list_id.lower()
+        list_id = str(list_id).lower()
 
         headers = {
             "Content-Type": "application/json",
@@ -149,14 +149,23 @@ class Trakt(ListScraper):
             
         headers["Authorization"] = f"Bearer {access_token}"
         logger.debug("Access token loaded")
+        item_types = "movie" # Default fallback
 
         if list_id.startswith("users/"):
-            logger.debug("Trakt Default User list")
+            logger.debug(f"Trakt User list via slug: {list_id}")
+            # Get Metadata
             r = requests.get(f"https://api.trakt.tv/{list_id}", headers=headers)
-            components = list_id.split("/")
-            list_name = f"{components[1]}'s {components[2]}"
-            description = f"{components[1]}'s {components[2]}"
-            items_data = r.json()
+            if r.status_code != 200:
+                logger.error(f"Trakt user list '{list_id}' not found! Status: {r.status_code}")
+                return {"name": "Error", "description": "List Not Found", "items": []}
+            
+            list_data = r.json()
+            list_name = list_data.get("name", "User List")
+            description = list_data.get("description", "")
+            
+            # Get Items
+            r = requests.get(f"https://api.trakt.tv/{list_id}/items", headers=headers)
+            items_data = r.json() if r.status_code == 200 else []
         elif list_id.startswith("shows/") or list_id.startswith("movies/"):
             # Chart
             logger.debug("Trakt chart list")
@@ -206,13 +215,34 @@ class Trakt(ListScraper):
             if max_items is not None:
                 items_data = items_data[:max_items]
         else:
-            logger.debug("Trakt User list")
+            # CUSTOM USER LIST
+            logger.debug(f"Trakt User list: {list_id}")
+            
             r = requests.get(f"https://api.trakt.tv/lists/{list_id}", headers=headers)
-            list_name = r.json()["name"]
-            description = r.json()["description"]
-            r = requests.get(f"https://api.trakt.tv/lists/{list_id}/items", headers=headers)
-            items_data = r.json()
+            
+            # Safety check: If list is private or ID is wrong, Trakt returns 404 or 401
+            if r.status_code != 200:
+                logger.error(f"Trakt list '{list_id}' not found or private (Status {r.status_code}). Skipping.")
+                return {"name": "Error", "description": "List Not Found", "items": []}
 
+            try:
+                list_data = r.json()
+                list_name = list_data.get("name", "Unknown List")
+                description = list_data.get("description", "")
+            except Exception:
+                logger.error(f"Failed to parse metadata for Trakt list '{list_id}'.")
+                return {"name": "Error", "description": "Invalid API Response", "items": []}
+
+            # Fetch the Items
+            r = requests.get(f"https://api.trakt.tv/lists/{list_id}/items", headers=headers)
+            if r.status_code == 200:
+                try:
+                    items_data = r.json()
+                except Exception:
+                    items_data = []
+            else:
+                logger.warning(f"Could not fetch items for list '{list_id}'.")
+                items_data = []
 
         # Process the items
         logger.debug("Processing items.")

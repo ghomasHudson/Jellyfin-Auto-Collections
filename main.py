@@ -6,6 +6,7 @@ from loguru import logger
 from pyaml_env import parse_config
 import os
 import sys
+import time
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -89,6 +90,8 @@ def main(config):
                 if config["plugins"][plugin_name].get("clear_collection", False):
                     # Optionally clear everything from the collection first
                     jf_client.clear_collection(collection_id)
+                    # If we are clearing the items, we should also clear the poster to ensure a new one is generated for the updated list.
+                    jf_client.delete_poster(collection_id)
 
                 # Add items to the collection
                 for item in list_info['items']:
@@ -98,6 +101,7 @@ def main(config):
                         year_filter=config["plugins"][plugin_name].get("year_filter", True),
                         jellyfin_query_parameters=config["jellyfin"].get("query_parameters", {})
                     )
+                    time.sleep(0.2)
                     if not matched and js_client is not None:
                         js_client.make_request(item)
 
@@ -105,7 +109,10 @@ def main(config):
                 if not jf_client.has_poster(collection_id):
                     logger.info("Collection has no poster - generating one")
                     jf_client.make_poster(collection_id, list_info["name"])
-
+                # Pause for 2 seconds between processing different lists. This prevents hitting Rate Limits on Jellyfin/Jellyseerr 
+                # and allows the database to finish writing before the next sync.
+                logger.debug("Finished list. 2-second sleep")
+                time.sleep(2)
 
 
 if __name__ == "__main__":

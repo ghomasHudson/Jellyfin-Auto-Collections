@@ -33,7 +33,7 @@ plugins:
       - ls087301829
   trakt:
     enabled: false
-    max_items: 20 #Sets a limit of the number of items pulled from Trakt. It does not take into account if finds a match for the item. if not set it pulls all.
+    max_items: 20           #Sets a limit of the number of items pulled from Trakt. It does not take into account if finds a match for the item. if not set it pulls all.
     list_ids:
       - movies/trending     #The most watched movies right now.
       - movies/popular      #The most popular movies of all time.
@@ -50,8 +50,8 @@ plugins:
       - shows/collected     #Most Collected Shows
       - shows/played        #The most played (a single user can watch multiple episodes multiple times) shows for the last week.
       - shows/anticipated   #The most anticipated shows based on the number of lists a show appears on.
-      - walt-disney-animated-feature-films
-      - "20124699"          # Custom list ID for a user's list. Peek at the HTML source of the list page to find <input id="list-id" type="hidden" value="20124699">
+      - users/draackje/lists/pixar-feature-films # Add user lists by adding the last part of the url (if private it has to be the same user that has the api)
+      - "20124699"          # Custom list ID for a user's list. (deprecated)
     client_id: aaaaaaa111111111 # Trakt API client ID. Create an app at https://trakt.tv/oauth/applications/new and copy the client ID
     client_secret: aaaaaaa111111111  # Trakt API client secret. Create an app at https://trakt.tv/oauth/applications/new and copy the client secret
   letterboxd:

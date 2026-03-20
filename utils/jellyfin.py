@@ -103,7 +103,14 @@ class JellyfinClient:
         if r.status_code == 404:
             return False
         return True
-
+    
+    def delete_poster(self, collection_id: str):
+        '''Deletes the primary image (poster) from a collection'''
+        r = requests.delete(f"{self.server_url}/Items/{collection_id}/Images/Primary", headers={"X-Emby-Token": self.api_key})
+        if r.status_code == 204 or r.status_code == 200:
+            logger.debug(f"Successfully deleted poster for collection {collection_id}")
+            return True
+        return False
 
     def make_poster(self, collection_id, collection_name, mosaic_limit=20, google_font_url="https://fonts.googleapis.com/css2?family=Dosis:wght@800&display=swap"):
 
