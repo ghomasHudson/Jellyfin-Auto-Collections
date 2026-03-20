@@ -98,9 +98,13 @@ def main(config):
                     plugin_name
                 )
 
+                # Give Jellyfin a moment to create the XML file if it's brand new
+                time.sleep(2)
+
                 if config["plugins"][plugin_name].get("clear_collection", False):
                     # Optionally clear everything from the collection first
                     jf_client.clear_collection(collection_id)
+                    time.sleep(5)
 
                 if config["plugins"][plugin_name].get("clear_poster", False):
                     # Optionally clear poster
@@ -114,7 +118,7 @@ def main(config):
                         year_filter=config["plugins"][plugin_name].get("year_filter", True),
                         jellyfin_query_parameters=config["jellyfin"].get("query_parameters", {})
                     )
-                    time.sleep(0.2)
+                    time.sleep(1)
                     if not matched and js_client is not None:
                         js_client.make_request(item)
 
