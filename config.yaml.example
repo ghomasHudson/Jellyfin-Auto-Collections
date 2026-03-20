@@ -31,31 +31,6 @@ plugins:
       - ls055592025
       - ls068305490
       - ls087301829
-  trakt:
-    enabled: false
-    clear_poster: true      #Clears poster before importing items (causes new generation)
-    clear_collection: true  #Clears collection before importing items
-    max_items: 20           #Sets a limit of the number of items pulled from Trakt. It does not take into account if finds a match for the item. if not set it pulls all.
-    list_ids:
-      - movies/trending     #The most watched movies right now.
-      - movies/popular      #The most popular movies of all time.
-      - movies/favorited    #The most favorited movies for the last week.
-      - movies/watched      #The most watched movies for the last week.
-      - movies/collected    #The most collected movies for the last week.
-      - movies/played       #The most played movies for the last week.
-      - movies/anticipated  #The most anticipated movies based on the number of lists a movie appears on.
-      - movies/boxoffice    #The top 10 movies in the US box office last weekend.
-      - shows/trending      #The most watched shows right now.
-      - shows/popular       #The most popular shows of all time. Popularity is calculated using the rating percentage and the number of ratings.
-      - shows/favorited     #The most favorited shows for the last week.
-      - shows/watched       #The most watched shows for the last week.
-      - shows/collected     #Most Collected Shows
-      - shows/played        #The most played (a single user can watch multiple episodes multiple times) shows for the last week.
-      - shows/anticipated   #The most anticipated shows based on the number of lists a show appears on.
-      - users/draackje/lists/pixar-feature-films # Add user lists by adding the last part of the url (if private it has to be the same user that has the api)
-      #- 20124699          # Custom list ID for a user's list. (deprecated)
-    client_id: aaaaaaa111111111 # Trakt API client ID. Create an app at https://trakt.tv/oauth/applications/new and copy the client ID
-    client_secret: aaaaaaa111111111  # Trakt API client secret. Create an app at https://trakt.tv/oauth/applications/new and copy the client secret
   letterboxd:
     enabled: true
     imdb_id_filter: true # Uses the imdb id for better matching. This does slow the script down though!
@@ -70,6 +45,15 @@ plugins:
     enabled: true
     list_ids:
       - 1000-greatest-films
+  trakt:
+    enabled: false
+    list_ids:
+      - "movies/boxoffice"
+      - "shows/popular"
+      - walt-disney-animated-feature-films
+      - "20124699"   # Custom list ID for a user's list. Peek at the HTML source of the list page to find <input id="list-id" type="hidden" value="20124699">
+    client_id: aaaaaaa111111111 # Trakt API client ID. Create an app at https://trakt.tv/oauth/applications/new and copy the client ID
+    client_secret: aaaaaaa111111111  # Trakt API client secret. Create an app at https://trakt.tv/oauth/applications/new and copy the client secret
   arr:
     enabled: false
     server_configs:
