@@ -3,3 +3,4 @@ config.yaml
 __pycache__
 .trakt_access_token
 .letterboxd_cache.json
+.vscode/settings.json
