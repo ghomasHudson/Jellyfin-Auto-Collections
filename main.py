@@ -9,7 +9,7 @@ import sys
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
-
+from pathlib import Path
 import argparse
 parser = argparse.ArgumentParser(description='Jellyfin List Scraper')
 parser.add_argument('--config', type=str, help='Path to config file', default='config.yaml')
@@ -20,6 +20,8 @@ log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 # Configure Loguru logger
 logger.remove()  # Remove default configuration
 logger.add(sys.stderr, level=log_level)
+
+working_directory = Path("/app/config") if os.getenv("RUNNING_IN_DOCKER", "").lower() == "true" else Path.cwd()
 
 # Load config
 if not os.path.exists(args.config):
