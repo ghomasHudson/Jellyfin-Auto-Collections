@@ -6,6 +6,7 @@ from loguru import logger
 from pyaml_env import parse_config
 import os
 import sys
+import time
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -77,6 +78,17 @@ def main(config):
 
                 # Match list items to jellyfin items
                 list_info = plugins[plugin_name].get_list(list_id, config['plugins'][plugin_name])
+                
+                # check if list is empty or returns None
+                if list_info is None or not list_info.get("items"):
+                    logger.warning(f"Skipping {list_id} because no data was returned.")
+                    continue
+
+                # Simple max items logic for all plugins.
+                max_items = config['plugins'][plugin_name].get("max_items")
+                if max_items and len(list_info['items']) > max_items:
+                    logger.info(f"Applying limit of {max_items} items to {list_id}")
+                    list_info['items'] = list_info['items'][:max_items]
 
                 # Find jellyfin collection or create it
                 collection_id = jf_client.find_collection_with_name_or_create(
@@ -86,9 +98,17 @@ def main(config):
                     plugin_name
                 )
 
+                # Give Jellyfin a moment to create the XML file if it's brand new
+                time.sleep(2)
+
                 if config["plugins"][plugin_name].get("clear_collection", False):
                     # Optionally clear everything from the collection first
                     jf_client.clear_collection(collection_id)
+                    time.sleep(5)
+
+                if config["plugins"][plugin_name].get("clear_poster", False):
+                    # Optionally clear poster
+                    jf_client.delete_poster(collection_id)
 
                 # Add items to the collection
                 for item in list_info['items']:
@@ -98,6 +118,7 @@ def main(config):
                         year_filter=config["plugins"][plugin_name].get("year_filter", True),
                         jellyfin_query_parameters=config["jellyfin"].get("query_parameters", {})
                     )
+                    time.sleep(1)
                     if not matched and js_client is not None:
                         js_client.make_request(item)
 
@@ -105,7 +126,10 @@ def main(config):
                 if not jf_client.has_poster(collection_id):
                     logger.info("Collection has no poster - generating one")
                     jf_client.make_poster(collection_id, list_info["name"])
-
+                # Pause for 2 seconds between processing different lists. This prevents hitting Rate Limits on Jellyfin/Jellyseerr 
+                # and allows the database to finish writing before the next sync.
+                logger.debug("Finished list. 2-second sleep")
+                time.sleep(2)
 
 
 if __name__ == "__main__":
