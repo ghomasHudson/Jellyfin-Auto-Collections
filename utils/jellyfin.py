@@ -5,7 +5,7 @@ from base64 import b64encode
 import json
 import concurrent.futures
 from .poster_generation import fetch_collection_posters, safe_download, create_mosaic, get_font
-
+import time
 
 class JellyfinClient:
 
@@ -103,7 +103,16 @@ class JellyfinClient:
         if r.status_code == 404:
             return False
         return True
-
+    
+    def delete_poster(self, collection_id: str):
+        '''Deletes the primary image (poster) from a collection'''
+        logger.info(f"Clearing existing poster for collection {collection_id}")
+        
+        r = requests.delete(
+            f"{self.server_url}/Items/{collection_id}/Images/Primary", 
+            headers={"X-Emby-Token": self.api_key}
+        )
+        return r.status_code in [200, 204]
 
     def make_poster(self, collection_id, collection_name, mosaic_limit=20, google_font_url="https://fonts.googleapis.com/css2?family=Dosis:wght@800&display=swap"):
 
@@ -199,16 +208,21 @@ class JellyfinClient:
                 logger.error(f"Error adding {item['title']} to collection - JSONDecodeError")
         return False
 
-
-
     def clear_collection(self, collection_id: str):
         '''Clears a collection by removing all items from it'''
         res = requests.get(f'{self.server_url}/Users/{self.user_id}/Items',headers={"X-Emby-Token": self.api_key}, params={"Recursive": "true", "parentId": collection_id})
-        all_ids = [item["Id"] for item in res.json()["Items"]]
+        
+        items = res.json().get("Items", [])
+        if not items:
+            logger.debug(f"Collection {collection_id} is already empty. Skipping clear.")
+            return
+
+        all_ids = [item["Id"] for item in items]
 
         # chunk ids into groups of 10
         all_ids = [all_ids[i:i + 10] for i in range(0, len(all_ids), 10)]
         for ids in all_ids:
-             requests.delete(f'{self.server_url}/Collections/{collection_id}/Items',headers={"X-Emby-Token": self.api_key}, params={"ids": ",".join(ids)})
+            requests.delete(f'{self.server_url}/Collections/{collection_id}/Items',headers={"X-Emby-Token": self.api_key}, params={"ids": ",".join(ids)})
+            time.sleep(0.5) 
 
         logger.info(f"Cleared collection {collection_id}")
