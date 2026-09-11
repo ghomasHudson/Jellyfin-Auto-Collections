@@ -2,7 +2,7 @@ import json
 from utils.base_plugin import ListScraper
 import bs4
 import os
-import requests
+from utils import http_client as requests
 from loguru import logger
 import time
 from pathlib import Path

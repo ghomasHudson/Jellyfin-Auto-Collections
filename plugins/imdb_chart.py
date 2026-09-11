@@ -1,5 +1,5 @@
 import bs4
-import requests
+from utils import http_client as requests
 from utils.base_plugin import ListScraper
 import json
 
