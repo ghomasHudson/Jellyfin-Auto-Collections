@@ -1,7 +1,7 @@
 from typing import cast
 from utils.jellyfin import JellyfinClient
 from utils.jellyseerr import JellyseerrClient
-import pluginlib
+from utils.plugin_loader import load_plugins
 from loguru import logger
 from pyaml_env import parse_config
 import os
@@ -47,8 +47,7 @@ def main(config):
         js_client = None
 
     # Load plugins
-    loader = pluginlib.PluginLoader(modules=['plugins'])
-    plugins = loader.plugins['list_scraper']
+    plugins = load_plugins()
 
     # If Jellyfin_api plugin is enabled - pass the jellyfin creds to it
     if "jellyfin_api" in config["plugins"] and config["plugins"]["jellyfin_api"].get("enabled", False):

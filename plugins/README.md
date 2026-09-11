@@ -3,12 +3,12 @@
 Each of these files implements the [base_plugin.py](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/blob/master/utils/base_plugin.py) base class:
 
 ```python
-import pluginlib
+from utils.base_plugin import ListScraper
 
-@pluginlib.Parent('list_scraper')
-class ListScraper(object):
+class MyPlugin(ListScraper):
 
-    @pluginlib.abstractmethod
+    _alias_ = "my_plugin"
+
     def get_list(list_id, config=None):
         pass
 ```
