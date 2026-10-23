@@ -61,12 +61,14 @@ Then run `python main.py`.
 
 ### Docker
 
-The easiest way to get going is to use the provided `docker-compose.yml` configuration. Whatever directory you end up mapping to the `/app/config` directory needs to contain your updated `config.yaml` file:
+The easiest way to get going is to use the provided `docker-compose.yml` configuration. Whatever directory you end up mapping to the `/app/config` directory needs to contain your updated `config.yaml` file.
+
+Set `JELLYFIN_AUTO_COLLECTIONS_IMAGE_REF` to a reviewed commit-SHA tag or digest before deploying. Do not use the mutable `latest` tag for unattended deployments.
 
 ```yaml
 services:
   jellyfin-auto-collections:
-    image: ghcr.io/ghomashudson/jellyfin-auto-collections:latest
+    image: ${JELLYFIN_AUTO_COLLECTIONS_IMAGE_REF:?set to a reviewed commit-SHA tag or digest, not latest}
     container_name: jellyfin-auto-collections
     environment:
       - CRONTAB=0 0 * * *

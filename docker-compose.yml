@@ -1,7 +1,7 @@
 services:
   jellyfin-auto-collections:
     #build: .
-    image: ghcr.io/ghomashudson/jellyfin-auto-collections:latest
+    image: ${JELLYFIN_AUTO_COLLECTIONS_IMAGE_REF:?set to a reviewed commit-SHA tag or digest, not latest}
     container_name: jellyfin-auto-collections
     environment:
       - CRONTAB=0 0 * * *
