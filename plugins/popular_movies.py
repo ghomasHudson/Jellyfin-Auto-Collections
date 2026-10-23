@@ -1,5 +1,5 @@
 import json
-import requests
+from utils import http_client as requests
 
 from utils.base_plugin import ListScraper
 

@@ -1,7 +1,7 @@
 import json
 from utils.base_plugin import ListScraper
 import bs4
-import requests
+from utils import http_client as requests
 
 class MDBList(ListScraper):
 

@@ -1,5 +1,5 @@
 import os
-import requests
+from utils import http_client as requests
 from loguru import logger
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
 import math
@@ -14,6 +14,8 @@ LINE_SPACING = 25
 SHADOW_SIZE = 8
 BACKGROUND_COLOR = (0, 0, 0)
 OVERLAY_PADDING = 50
+MAX_POSTER_DOWNLOAD_BYTES = 10 * 1024 * 1024
+ALLOWED_IMAGE_FORMATS = ["JPEG", "PNG", "WEBP"]
 
 def get_font(url, font_dir="./fonts"):
     '''Download ttf from google font css'''
@@ -77,10 +79,45 @@ def download_image(url, headers):
     """
     Downloads an image from a URL and returns a Pillow Image object.
     """
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, stream=True)
     response.raise_for_status()
-    image = Image.open(BytesIO(response.content)).convert("RGB")
-    return image
+    _validate_image_response(response)
+    image_data = _read_limited_response(response, MAX_POSTER_DOWNLOAD_BYTES)
+    with Image.open(BytesIO(image_data), formats=ALLOWED_IMAGE_FORMATS) as image:
+        if image.format not in ALLOWED_IMAGE_FORMATS:
+            raise ValueError(f"Unsupported image format: {image.format}")
+        return image.convert("RGB")
+
+
+def _validate_image_response(response):
+    content_type = response.headers.get("Content-Type", "").split(";")[0].strip().lower()
+    if content_type and not content_type.startswith("image/"):
+        raise ValueError(f"Unsupported content type: {content_type}")
+
+    content_length = response.headers.get("Content-Length")
+    if content_length is None:
+        return
+
+    try:
+        size = int(content_length)
+    except ValueError:
+        return
+
+    if size > MAX_POSTER_DOWNLOAD_BYTES:
+        raise ValueError(f"Image download is too large: {size} bytes")
+
+
+def _read_limited_response(response, max_bytes):
+    chunks = []
+    total = 0
+    for chunk in response.iter_content(chunk_size=8192):
+        if not chunk:
+            continue
+        total += len(chunk)
+        if total > max_bytes:
+            raise ValueError(f"Image download exceeded {max_bytes} bytes")
+        chunks.append(chunk)
+    return b"".join(chunks)
 
 
 # --- Text and Font Functions ---

@@ -1,4 +1,4 @@
-import requests
+from utils import http_client as requests
 import html
 from loguru import logger
 from base64 import b64encode

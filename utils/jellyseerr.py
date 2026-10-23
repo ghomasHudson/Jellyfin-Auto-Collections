@@ -1,4 +1,4 @@
-import requests
+from utils import http_client as requests
 import urllib.parse
 from loguru import logger
 
