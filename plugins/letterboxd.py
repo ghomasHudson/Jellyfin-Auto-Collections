@@ -2,7 +2,7 @@ from utils.base_plugin import ListScraper
 from loguru import logger
 from letterboxdpy.list import List
 from letterboxdpy.watchlist import Watchlist
-from letterboxdpy.movie import Movie
+from letterboxdpy.pages.movie_profile import MovieProfile
 import json
 import os
 
@@ -102,22 +102,25 @@ class Letterboxd(ListScraper):
                         # Fetch from API if not in cache
                         try:
                             logger.debug(f"Fetching IMDb ID for: {movie['title']}")
-                            movie_instance = Movie(slug)
+                            # Only fetch the main film page. Movie also loads unrelated
+                            # pages (including /details), which may be blocked.
+                            movie_profile = MovieProfile(slug)
 
                             # Prepare cache entry
                             cache_entry = {}
 
-                            # Get IMDb link and extract ID
-                            if movie_instance.imdb_link:
-                                imdb_id = movie_instance.imdb_link.split("/title/")[1].split("/")[0]
+                            # Get IMDb ID from the main film page
+                            imdb_id = movie_profile.get_imdb_id()
+                            if imdb_id:
                                 movie["imdb_id"] = imdb_id
                                 cache_entry["imdb_id"] = imdb_id
 
                             # Get year if not already present
-                            if movie_instance.year:
-                                cache_entry["year"] = movie_instance.year
+                            year = movie_profile.get_year()
+                            if year:
+                                cache_entry["year"] = year
                                 if "release_year" not in movie:
-                                    movie["release_year"] = str(movie_instance.year)
+                                    movie["release_year"] = str(year)
 
                             # Save to cache
                             cache[slug] = cache_entry
