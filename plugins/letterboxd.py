@@ -1,10 +1,17 @@
-from utils.base_plugin import ListScraper
-from loguru import logger
-from letterboxdpy.list import List
-from letterboxdpy.watchlist import Watchlist
-from letterboxdpy.pages.movie_profile import MovieProfile
 import json
 import os
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from letterboxdpy.auth import UserSession
+from letterboxdpy.core.scraper import Scraper
+from letterboxdpy.list import List
+from letterboxdpy.pages.movie_profile import MovieProfile
+from letterboxdpy.pages.user_likes import UserLikes
+from letterboxdpy.watchlist import Watchlist
+from loguru import logger
+
+from utils.base_plugin import ListScraper
 
 
 class Letterboxd(ListScraper):
@@ -34,6 +41,30 @@ class Letterboxd(ListScraper):
 
     def get_list(list_id, config=None):
         config = config or {}
+        list_id = list_id.rstrip("/")
+        username, password = config.get("username"), config.get("password")
+        if not username and not password:
+            return Letterboxd._read_list(list_id, config)
+        if not username or not password:
+            raise ValueError(
+                "Letterboxd authentication requires both username and password."
+            )
+
+        # login() installs a process-wide scraper session and saves its cookies.
+        # Keep the cookie file private and restore anonymous access after this list.
+        previous = Scraper.instance()
+        try:
+            with TemporaryDirectory() as directory:
+                UserSession.login(username, password, Path(directory) / "cookies.json")
+            return Letterboxd._read_list(list_id, config)
+        finally:
+            current = Scraper.instance()
+            Scraper.set_instance(previous)
+            if current is not previous:
+                current.close()
+
+    @staticmethod
+    def _read_list(list_id, config):
         movies = []
 
         # Load cache
@@ -41,42 +72,30 @@ class Letterboxd(ListScraper):
         cache_updated = False
 
         # Determine list type and parse list_id
-        watchlist = list_id.endswith("/watchlist")
-        likeslist = list_id.endswith("/likes/films")
+        username, _, route = list_id.partition("/")
 
-        if watchlist:
+        if route == "watchlist":
             # Format: username/watchlist
-            username = list_id.split("/")[0]
             logger.info(f"Fetching watchlist for user: {username}")
-            list_instance = Watchlist(username)
+            movies_dict = Watchlist(username).movies
             list_name = f"{username} Watchlist"
             description = f"Watchlist for {username}"
 
-        elif likeslist:
-            raise NotImplementedError(
-                "Likes lists are not currently supported. Please use regular lists or watchlists instead."
-            )
+        elif route == "likes/films":
+            logger.info(f"Fetching liked films for user: {username}")
+            movies_dict = UserLikes(username).get_liked_films()["movies"]
+            list_name = f"{username} Liked Films"
+            description = f"Films liked by {username}"
 
         else:
-            # Format: username/list/list-slug
-            parts = list_id.split("/")
-            if len(parts) >= 3 and parts[1] == "list":
-                username = parts[0]
-                slug = "/".join(
-                    parts[2:]
-                )  # Join remaining parts in case slug has slashes
-            else:
-                # Fallback: assume entire string is username/slug
-                username = parts[0]
-                slug = "/".join(parts[1:])
-
+            # Accept both username/list/slug and the shorthand username/slug.
+            slug = route.removeprefix("list/")
             logger.info(f"Fetching list for user: {username}, slug: {slug}")
             list_instance = List(username, slug)
             list_name = list_instance.title
             description = list_instance.description or ""
+            movies_dict = list_instance.movies
 
-        # Get movies from the list
-        movies_dict = list_instance.movies
         logger.info(f"Found {len(movies_dict)} movies in list")
 
         # Convert letterboxdpy format to our internal format
@@ -91,7 +110,7 @@ class Letterboxd(ListScraper):
                 movie["release_year"] = str(movie_data["year"])
 
             # Fetch IMDb ID if requested or if year is missing
-            if config.get("imdb_id_filter", False) or "year" not in movie_data:
+            if config.get("imdb_id_filter", False) or "release_year" not in movie:
                 slug = movie_data.get("slug")
                 if slug:
                     # Check cache first

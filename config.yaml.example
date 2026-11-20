@@ -58,10 +58,15 @@ plugins:
     client_secret: aaaaaaa111111111  # Trakt API client secret. Create an app at https://trakt.tv/oauth/applications/new and copy the client secret
   letterboxd:
     enabled: true
+    # Optional: sign in to read your own private lists.
+    # username: !ENV ${LETTERBOXD_USERNAME}
+    # password: !ENV ${LETTERBOXD_PASSWORD}
     imdb_id_filter: true # Uses the imdb id for better matching. This does slow the script down though!
     list_ids:
       - fcbarcelona/list/movies-everyone-should-watch-at-least-once
       - dave/list/official-top-250-narrative-feature-films
+      # - yourname/likes/films
+      # - yourname/list/your-private-list
   mdblist:
     enabled: false
     list_ids:

@@ -21,7 +21,7 @@ args = parser.parse_args()
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 # Configure Loguru logger
 logger.remove()  # Remove default configuration
-logger.add(sys.stderr, level=log_level)
+logger.add(sys.stderr, level=log_level, diagnose=False)  # Keep credentials out of tracebacks.
 
 # Load config
 if not os.path.exists(args.config):

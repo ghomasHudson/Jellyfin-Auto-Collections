@@ -34,7 +34,7 @@ Can't find Ménilmontant
 
 - IMDB Charts - e.g. [Top 250 Movies](https://imdb.com/chart/top), [Top Box Office](https://imdb.com/chart/boxoffice)
 - IMDB Lists - e.g. [Top 100 Greatest Movie of All time](https://imdb.com/list/ls055592025)
-- Letterboxd - e.g. [Movies everyone should watch at least once...](https://letterboxd.com/fcbarcelona/list/movies-everyone-should-watch-at-least-once)
+- Letterboxd - lists (`username/list/slug`), watchlists (`username/watchlist`), and liked films (`username/likes/films`). Public lists need no login. To sync your own private list, use its usual list ID and set both `plugins.letterboxd.username` and `plugins.letterboxd.password` via environment variables as shown in `config.yaml.example`. For Docker, pass those variables into the container. The resulting collection is visible according to Jellyfin’s permissions, not Letterboxd’s privacy settings.
 - mdblist - e.g. [Top Movies of the week](https://mdblist.com/lists/garycrawfordgc/top-movies-of-the-week)
 - They Shoot Pictures, Don't They - [The 1,000 Greatest Films](https://www.theyshootpictures.com/gf1000_all1000films_table.php)
 - Trakt - e.g. [Popular Movies](https://trakt.tv/movies/popular). See the [Wiki](https://github.com/ghomasHudson/Jellyfin-Auto-Collections/wiki/Plugin-%E2%80%90-Trakt) for instructions.
