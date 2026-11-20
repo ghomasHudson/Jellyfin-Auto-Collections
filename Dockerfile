@@ -1,22 +1,20 @@
-FROM python:3.10-alpine AS base
+FROM python:3.12-slim-bookworm
 
 LABEL org.opencontainers.image.source https://github.com/ghomasHudson/jellyfin-auto-collections
 
-ENV RUNNING_IN_DOCKER true
-
-RUN apk update
-FROM base AS build
+ENV RUNNING_IN_DOCKER=true \
+    PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 WORKDIR /app
 COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
-COPY . .
-
-FROM build AS final
-
-WORKDIR /app
-COPY --from=build /app /app
+RUN apt-get update && apt-get install -y --no-install-recommends libatomic1 \
+    && pip install --no-cache-dir -r requirements.txt \
+    && python -m playwright install --with-deps --only-shell chromium \
+    && rm -rf /var/lib/apt/lists/*
+COPY main.py .
+COPY plugins/ plugins/
+COPY utils/ utils/
 
 VOLUME [ "/app/config" ]
 
-ENTRYPOINT [ "python3.10", "-u", "main.py", "--config", "/app/config/config.yaml" ]
+ENTRYPOINT [ "python", "-u", "main.py", "--config", "/app/config/config.yaml" ]

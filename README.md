@@ -57,6 +57,9 @@ Make sure you have Python 3 and pip installed.
 
 Install the requirements with `pip install -r requirements.txt`.
 
+If you enable either IMDb plugin, install its Chromium browser with
+`python -m playwright install --with-deps --only-shell chromium` (the Docker image includes it).
+
 Then run `python main.py`.
 
 ### Docker

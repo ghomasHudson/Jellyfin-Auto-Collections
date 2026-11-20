@@ -1,70 +1,55 @@
-import bs4
-import requests
-from utils.base_plugin import ListScraper
 import json
+
+from utils.base_plugin import ListScraper
+from utils.imdb import imdb_pages
 
 
 class IMDBChart(ListScraper):
     _alias_ = "imdb_chart"
 
     def get_list(list_id, config=None):
-        res = requests.get(
-            f"https://www.imdb.com/chart/{list_id}",
-            headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
-                "Accept-Language": "en-US",
-            },
-        )
-        soup = bs4.BeautifulSoup(res.text, "html.parser")
+        with imdb_pages() as read:
+            soup = read(f"https://www.imdb.com/chart/{list_id}/")
+            script = soup.find("script", id="__NEXT_DATA__")
+            if not soup.title or not script:
+                raise ValueError(f"IMDb returned no chart data for {list_id}")
 
-        # Check if IMDb blocked the request or returned an empty/challenge page
-        title_tag = soup.find("title")
-        data_tag = soup.find("script", id="__NEXT_DATA__")
-        if not title_tag or not data_tag:
-            return None
-
-        list_name = title_tag.text
-        description = soup.find("meta", property="og:description")["content"]
-        movies = []
-
-        data = json.loads(data_tag.text)
-
-        for movie in next(iter(data["props"]["pageProps"]["pageData"].values()))[
-            "edges"
-        ]:
-            movie = movie["node"]
-            if "titleText" not in movie:
-                # Get item details
-                res = requests.get(
-                    f"https://www.imdb.com/title/{movie['release']['titles'][0]['id']}",
-                    headers={
-                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0"
-                    },
-                )
-                soup = bs4.BeautifulSoup(res.text, "html.parser")
-
-                item_script = soup.find("script", id="__NEXT_DATA__")
-                if not item_script:
-                    continue
-
-                item_data = json.loads(item_script.text)
-                movie = item_data["props"]["pageProps"]["aboveTheFoldData"]
-
-            title = movie["titleText"]["text"]
-
-            release_year = None
-            if movie["releaseYear"] is not None:
-                release_year = movie["releaseYear"]["year"]
-
-            media_type = movie["titleType"]["id"]
-            imdb_id = movie["id"]
-
-            movies.append(
-                {
-                    "title": title,
-                    "release_year": release_year,
-                    "media_type": media_type,
-                    "imdb_id": imdb_id,
-                }
+            page = json.loads(script.string)["props"]["pageProps"]["pageData"]
+            chart = next(
+                (v for v in page.values() if isinstance(v, dict) and "edges" in v), None
             )
-        return {"name": list_name, "items": movies, "description": description}
+            if not chart or not chart["edges"]:
+                raise ValueError(f"IMDb returned no chart entries for {list_id}")
+
+            movies = []
+            for edge in chart["edges"]:
+                movie = edge["node"]
+                if "titleText" not in movie:
+                    # Box office entries wrap the title in a release.
+                    movie = movie["release"]["titles"][0]
+                    if not {"titleText", "releaseYear", "titleType"} <= movie.keys():
+                        detail = read(f"https://www.imdb.com/title/{movie['id']}/")
+                        script = detail.find("script", id="__NEXT_DATA__")
+                        if not script:
+                            raise ValueError(
+                                f"IMDb returned no title data for {movie['id']}"
+                            )
+                        movie = json.loads(script.string)["props"]["pageProps"][
+                            "aboveTheFoldData"
+                        ]
+
+                movies.append(
+                    {
+                        "title": movie["titleText"]["text"],
+                        "release_year": (movie.get("releaseYear") or {}).get("year"),
+                        "media_type": movie["titleType"]["id"],
+                        "imdb_id": movie["id"],
+                    }
+                )
+
+            desc = soup.find("meta", property="og:description")
+            return {
+                "name": soup.title.get_text(strip=True),
+                "description": desc.get("content", "") if desc else "",
+                "items": movies,
+            }
