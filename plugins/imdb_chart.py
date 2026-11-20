@@ -3,37 +3,50 @@ import requests
 from utils.base_plugin import ListScraper
 import json
 
-class IMDBChart(ListScraper):
 
-    _alias_ = 'imdb_chart'
+class IMDBChart(ListScraper):
+    _alias_ = "imdb_chart"
 
     def get_list(list_id, config=None):
-        res = requests.get(f'https://www.imdb.com/chart/{list_id}', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0', 'Accept-Language': 'en-US'})
-        soup = bs4.BeautifulSoup(res.text, 'html.parser')
-        
+        res = requests.get(
+            f"https://www.imdb.com/chart/{list_id}",
+            headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0",
+                "Accept-Language": "en-US",
+            },
+        )
+        soup = bs4.BeautifulSoup(res.text, "html.parser")
+
         # Check if IMDb blocked the request or returned an empty/challenge page
-        title_tag = soup.find('title')
-        data_tag = soup.find('script', id='__NEXT_DATA__')
+        title_tag = soup.find("title")
+        data_tag = soup.find("script", id="__NEXT_DATA__")
         if not title_tag or not data_tag:
             return None
 
         list_name = title_tag.text
-        description = soup.find('meta', property='og:description')['content']
+        description = soup.find("meta", property="og:description")["content"]
         movies = []
 
         data = json.loads(data_tag.text)
 
-        for movie in next(iter(data["props"]["pageProps"]["pageData"].values()))["edges"]:
+        for movie in next(iter(data["props"]["pageProps"]["pageData"].values()))[
+            "edges"
+        ]:
             movie = movie["node"]
             if "titleText" not in movie:
                 # Get item details
-                res = requests.get(f'https://www.imdb.com/title/{movie["release"]["titles"][0]["id"]}', headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0'})
-                soup = bs4.BeautifulSoup(res.text, 'html.parser')
-                
-                item_script = soup.find('script', id='__NEXT_DATA__')
+                res = requests.get(
+                    f"https://www.imdb.com/title/{movie['release']['titles'][0]['id']}",
+                    headers={
+                        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:145.0) Gecko/20100101 Firefox/145.0"
+                    },
+                )
+                soup = bs4.BeautifulSoup(res.text, "html.parser")
+
+                item_script = soup.find("script", id="__NEXT_DATA__")
                 if not item_script:
                     continue
-                
+
                 item_data = json.loads(item_script.text)
                 movie = item_data["props"]["pageProps"]["aboveTheFoldData"]
 
@@ -46,5 +59,12 @@ class IMDBChart(ListScraper):
             media_type = movie["titleType"]["id"]
             imdb_id = movie["id"]
 
-            movies.append({'title': title, 'release_year': release_year, "media_type": media_type, "imdb_id": imdb_id})
-        return {'name': list_name, 'items': movies, "description": description}
+            movies.append(
+                {
+                    "title": title,
+                    "release_year": release_year,
+                    "media_type": media_type,
+                    "imdb_id": imdb_id,
+                }
+            )
+        return {"name": list_name, "items": movies, "description": description}

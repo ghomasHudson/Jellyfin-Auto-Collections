@@ -4,13 +4,13 @@ import bs4
 import requests
 from loguru import logger
 
-class ListMania(ListScraper):
 
-    _alias_ = 'listmania'
+class ListMania(ListScraper):
+    _alias_ = "listmania"
 
     def get_list(list_id, config=None):
         r = requests.get(f"https://www.listmania.org/list/{list_id}")
-        soup = bs4.BeautifulSoup(r.text, 'html.parser')
+        soup = bs4.BeautifulSoup(r.text, "html.parser")
 
         # Find the JSON-LD script tag
         json_ld_tag = soup.find("script", type="application/ld+json")
@@ -32,17 +32,15 @@ class ListMania(ListScraper):
                 continue
             year = item.get("datePublished", "").strip()
             imdb_url = item.get("sameAs", "")
-            imdb_id = imdb_url.split('/')[-2] if "imdb.com" in imdb_url else None
+            imdb_id = imdb_url.split("/")[-2] if "imdb.com" in imdb_url else None
 
-            items.append({
-                "title": title,
-                "release_year": year,
-                "media_type": item.get("@type", "Movie").lower(),
-                "imdb_id": imdb_id
-            })
+            items.append(
+                {
+                    "title": title,
+                    "release_year": year,
+                    "media_type": item.get("@type", "Movie").lower(),
+                    "imdb_id": imdb_id,
+                }
+            )
 
-        return {
-            "name": list_name,
-            "description": description,
-            "items": items
-        }
+        return {"name": list_name, "description": description, "items": items}

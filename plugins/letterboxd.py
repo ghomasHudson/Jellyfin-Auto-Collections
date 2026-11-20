@@ -6,17 +6,17 @@ from letterboxdpy.pages.movie_profile import MovieProfile
 import json
 import os
 
-class Letterboxd(ListScraper):
 
-    _alias_ = 'letterboxd'
-    _cache_file_ = '.letterboxd_cache.json'
+class Letterboxd(ListScraper):
+    _alias_ = "letterboxd"
+    _cache_file_ = ".letterboxd_cache.json"
 
     @staticmethod
     def _load_cache():
         """Load the movie details cache from disk."""
         if os.path.exists(Letterboxd._cache_file_):
             try:
-                with open(Letterboxd._cache_file_, 'r') as f:
+                with open(Letterboxd._cache_file_, "r") as f:
                     return json.load(f)
             except Exception as e:
                 logger.warning(f"Failed to load cache: {e}")
@@ -27,7 +27,7 @@ class Letterboxd(ListScraper):
     def _save_cache(cache):
         """Save the movie details cache to disk."""
         try:
-            with open(Letterboxd._cache_file_, 'w') as f:
+            with open(Letterboxd._cache_file_, "w") as f:
                 json.dump(cache, f, indent=2)
         except Exception as e:
             logger.warning(f"Failed to save cache: {e}")
@@ -53,14 +53,18 @@ class Letterboxd(ListScraper):
             description = f"Watchlist for {username}"
 
         elif likeslist:
-            raise NotImplementedError("Likes lists are not currently supported. Please use regular lists or watchlists instead.")
+            raise NotImplementedError(
+                "Likes lists are not currently supported. Please use regular lists or watchlists instead."
+            )
 
         else:
             # Format: username/list/list-slug
             parts = list_id.split("/")
             if len(parts) >= 3 and parts[1] == "list":
                 username = parts[0]
-                slug = "/".join(parts[2:])  # Join remaining parts in case slug has slashes
+                slug = "/".join(
+                    parts[2:]
+                )  # Join remaining parts in case slug has slashes
             else:
                 # Fallback: assume entire string is username/slug
                 username = parts[0]
@@ -79,7 +83,7 @@ class Letterboxd(ListScraper):
         for letterboxd_id, movie_data in movies_dict.items():
             movie = {
                 "title": movie_data.get("name") or movie_data.get("title"),
-                "media_type": "movie"
+                "media_type": "movie",
             }
 
             # Add year if available
@@ -127,7 +131,9 @@ class Letterboxd(ListScraper):
                             cache_updated = True
 
                         except Exception as e:
-                            logger.warning(f"Failed to fetch details for {movie['title']}: {e}")
+                            logger.warning(
+                                f"Failed to fetch details for {movie['title']}: {e}"
+                            )
 
             # Only add movies with a release year
             if "release_year" in movie:
@@ -138,12 +144,16 @@ class Letterboxd(ListScraper):
             Letterboxd._save_cache(cache)
             logger.info(f"Cache updated with new movie details")
 
-        return {'name': list_name, 'items': movies, "description": description}
+        return {"name": list_name, "items": movies, "description": description}
 
 
 if __name__ == "__main__":
     # Basic test
-    result = Letterboxd.get_list("stautis/list/good-films-90-minutes-or-less", {"imdb_id_filter": True})
+    result = Letterboxd.get_list(
+        "stautis/list/good-films-90-minutes-or-less", {"imdb_id_filter": True}
+    )
     print(f"List: {result['name']}")
     print(f"Total movies: {len(result['items'])}")
-    print(f"First movie: {result['items'][0]['title']} ({result['items'][0].get('release_year', 'N/A')})")
+    print(
+        f"First movie: {result['items'][0]['title']} ({result['items'][0].get('release_year', 'N/A')})"
+    )

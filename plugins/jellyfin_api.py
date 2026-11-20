@@ -3,15 +3,16 @@ import requests
 import json
 from utils.base_plugin import ListScraper
 
-class JellyfinAPI(ListScraper):
-    '''Generate collections based on Jellyfin API queries'''
 
-    _alias_ = 'jellyfin_api'
+class JellyfinAPI(ListScraper):
+    """Generate collections based on Jellyfin API queries"""
+
+    _alias_ = "jellyfin_api"
 
     def get_list(list_id, config=None):
-        '''Call jellyfin API
-           list_id should be a dict to pass to https://api.jellyfin.org/#tag/Items/operation/GetItems
-        '''
+        """Call jellyfin API
+        list_id should be a dict to pass to https://api.jellyfin.org/#tag/Items/operation/GetItems
+        """
 
         # If list name/desc have been manually specified - grab them
         list_name = f"{list_id}"
@@ -28,23 +29,25 @@ class JellyfinAPI(ListScraper):
             "enableImages": "false",
             "Recursive": "true",
             "fields": ["ProviderIds", "ProductionYear"],
-            "userId": config["user_id"]
+            "userId": config["user_id"],
         }
         params = {**params, **list_id}
 
-        res = requests.get(f'{config["server_url"]}/Items',headers={"Authorization": f'MediaBrowser Token="{config["api_key"]}"'}, params=params)
+        res = requests.get(
+            f"{config['server_url']}/Items",
+            headers={"Authorization": f'MediaBrowser Token="{config["api_key"]}"'},
+            params=params,
+        )
 
         items = []
         for item in res.json()["Items"]:
-            items.append({
-                "title": item["Name"],
-                "release_year": item.get("ProductionYear", None),
-                "media_type": item["Type"],
-                "imdb_id": item["ProviderIds"].get("Imdb", None)
-            })
+            items.append(
+                {
+                    "title": item["Name"],
+                    "release_year": item.get("ProductionYear", None),
+                    "media_type": item["Type"],
+                    "imdb_id": item["ProviderIds"].get("Imdb", None),
+                }
+            )
 
-        return {
-            "name": list_name,
-            "description": list_desc,
-            "items": items
-        }
+        return {"name": list_name, "description": list_desc, "items": items}

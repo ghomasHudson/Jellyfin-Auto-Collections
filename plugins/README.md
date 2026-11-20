@@ -5,9 +5,9 @@ Each of these files implements the [base_plugin.py](https://github.com/ghomasHud
 ```python
 import pluginlib
 
-@pluginlib.Parent('list_scraper')
-class ListScraper(object):
 
+@pluginlib.Parent("list_scraper")
+class ListScraper(object):
     @pluginlib.abstractmethod
     def get_list(list_id, config=None):
         pass

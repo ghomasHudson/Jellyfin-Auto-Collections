@@ -15,8 +15,9 @@ SHADOW_SIZE = 8
 BACKGROUND_COLOR = (0, 0, 0)
 OVERLAY_PADDING = 50
 
+
 def get_font(url, font_dir="./fonts"):
-    '''Download ttf from google font css'''
+    """Download ttf from google font css"""
 
     font_name = url.split("family=")[1].split("&")[0]
     font_name = font_name.replace(":", "_")
@@ -37,31 +38,36 @@ def get_font(url, font_dir="./fonts"):
 
     # Download font
     r = requests.get(font_url)
-    with open(font_path, 'wb') as f:
+    with open(font_path, "wb") as f:
         f.write(r.content)
     r.raise_for_status()
     return font_path
 
+
 # --- Data Fetching Functions ---
+
 
 def fetch_collection_posters(jellyfin_url, api_key, user_id, collection_id):
     """
     Fetches the poster URLs for all items in the specified collection.
     """
     logger.info(f"Fetching posters for collection ID {collection_id}...")
-    headers = {'Authorization': f'MediaBrowser Token="{api_key}"'}
+    headers = {"Authorization": f'MediaBrowser Token="{api_key}"'}
     url = f"{jellyfin_url}/Items"
-    params = {'parentId': collection_id, 'userId': user_id}
+    params = {"parentId": collection_id, "userId": user_id}
     response = requests.get(url, headers=headers, params=params)
     response.raise_for_status()
-    items = response.json().get('Items', [])
+    items = response.json().get("Items", [])
     poster_urls = []
     for item in items:
-        if 'ImageTags' in item and 'Primary' in item['ImageTags']:
+        if "ImageTags" in item and "Primary" in item["ImageTags"]:
             poster_url = f"{jellyfin_url}/Items/{item['Id']}/Images/Primary?tag={item['ImageTags']['Primary']}"
             poster_urls.append(poster_url)
-    logger.info(f"Found {len(poster_urls)} poster(s) for collection ID {collection_id}.")
+    logger.info(
+        f"Found {len(poster_urls)} poster(s) for collection ID {collection_id}."
+    )
     return poster_urls
+
 
 def safe_download(url, headers):
     """
@@ -72,6 +78,7 @@ def safe_download(url, headers):
     except Exception as e:
         logger.error(f"Error downloading image {url}: {e}")
         return None
+
 
 def download_image(url, headers):
     """
@@ -84,6 +91,7 @@ def download_image(url, headers):
 
 
 # --- Text and Font Functions ---
+
 
 def wrap_text(text, font, draw, max_width):
     """
@@ -107,7 +115,9 @@ def wrap_text(text, font, draw, max_width):
     return lines
 
 
-def get_adjusted_font_and_wrapped_text(text, draw, max_width, max_height, font_file, max_font_size=200, min_font_size=20):
+def get_adjusted_font_and_wrapped_text(
+    text, draw, max_width, max_height, font_file, max_font_size=200, min_font_size=20
+):
     """
     Determines a font size that allows the text to be wrapped within max_width and max_height.
     Returns the chosen font, the wrapped lines, and the total text block height.
@@ -119,7 +129,11 @@ def get_adjusted_font_and_wrapped_text(text, draw, max_width, max_height, font_f
         line_height = ascent + descent
         total_height = line_height * len(lines) + LINE_SPACING * (len(lines) - 1)
         # Check if the text block fits within the limits
-        max_line_width = max(draw.textbbox((0, 0), line, font=font)[2] - draw.textbbox((0, 0), line, font=font)[0] for line in lines)
+        max_line_width = max(
+            draw.textbbox((0, 0), line, font=font)[2]
+            - draw.textbbox((0, 0), line, font=font)[0]
+            for line in lines
+        )
         if max_line_width <= max_width and total_height <= max_height:
             return font, lines, total_height
     # Fall back to minimum font size
@@ -132,7 +146,9 @@ def get_adjusted_font_and_wrapped_text(text, draw, max_width, max_height, font_f
     return font, lines, total_height
 
 
-def draw_text_with_shadow(draw, text, position, font, shadow_size, text_color="white", shadow_color="black"):
+def draw_text_with_shadow(
+    draw, text, position, font, shadow_size, text_color="white", shadow_color="black"
+):
     """
     Draw text with a shadow effect at the specified position.
     """
@@ -165,13 +181,14 @@ def draw_text_block(draw, lines, font, total_text_height, overlay_y, overlay_hei
 
 # --- Mosaic Creation Functions ---
 
+
 def create_mosaic_background(poster_images):
     """
     Create the mosaic background from poster images.
     Returns a blurred canvas with the images pasted in a grid that fills the entire canvas.
     Some parts of the posters may be cut off to ensure a complete fill.
     """
-    canvas = Image.new('RGB', (CANVAS_WIDTH, CANVAS_HEIGHT), BACKGROUND_COLOR)
+    canvas = Image.new("RGB", (CANVAS_WIDTH, CANVAS_HEIGHT), BACKGROUND_COLOR)
     num_posters = len(poster_images)
     if num_posters == 0:
         raise ValueError("No poster images available!")
@@ -187,10 +204,12 @@ def create_mosaic_background(poster_images):
     # Place each poster image into its respective cell.
     # ImageOps.fit will scale and crop the image as necessary to cover the entire cell.
     for idx, img in enumerate(poster_images):
-        fitted_img = ImageOps.fit(img, (cell_width, cell_height), method=Image.Resampling.LANCZOS)
+        fitted_img = ImageOps.fit(
+            img, (cell_width, cell_height), method=Image.Resampling.LANCZOS
+        )
         col = idx % grid_cols
         row = idx // grid_cols
-        x = col * cell_width   # No horizontal offset
+        x = col * cell_width  # No horizontal offset
         y = row * cell_height  # No vertical offset
         canvas.paste(fitted_img, (x, y))
 
@@ -215,12 +234,14 @@ def apply_text_overlay(image, collection_name, font_file):
     overlay_y = (CANVAS_HEIGHT - overlay_height) // 2
 
     # Create a transparent overlay image
-    overlay = Image.new('RGBA', (overlay_width, overlay_height), (0, 0, 0, 0))
+    overlay = Image.new("RGBA", (overlay_width, overlay_height), (0, 0, 0, 0))
     overlay_draw = ImageDraw.Draw(overlay)
 
     # Draw a rounded rectangle on the overlay
     radius = 30  # Adjust the radius for more or less rounding
-    overlay_draw.rounded_rectangle([(0, 0), (overlay_width, overlay_height)], radius=radius, fill=(0, 0, 0, 200))
+    overlay_draw.rounded_rectangle(
+        [(0, 0), (overlay_width, overlay_height)], radius=radius, fill=(0, 0, 0, 200)
+    )
 
     # Paste the rounded overlay onto the canvas using its alpha channel as mask
     image.paste(overlay, (overlay_x, overlay_y), overlay)
