@@ -1,6 +1,9 @@
+> [!TIP]
+> If you want something simpler: I'm building [Jellyfin Magic Collections](https://github.com/ghomasHudson/Jellyfin-Magic-Collections-Plugin) which implements the basic functionality from here as a Jellyfin plugin! 
+
 # Jellyfin Auto Collections
 
-A tool to automatically make and update [jellyfin](https://jellyfin.org) collections based on internet lists such as IMDb and letterboxd. Also syncs with [Overseerr](https://overseerr.dev/)/[Jellyseerr](https://github.com/Fallenbagel/jellyseerr).
+A tool to automatically make and update [Jellyfin](https://jellyfin.org) collections based on internet lists such as IMDb and letterboxd. Also syncs with [Overseerr](https://overseerr.dev/)/[Jellyseerr](https://github.com/Fallenbagel/jellyseerr).
 
 ```
 Getting collections list...
